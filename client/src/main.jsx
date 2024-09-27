@@ -4,8 +4,7 @@ import App from "./App.jsx";
 import { Provider } from "react-redux";
 import store from "./redux/store.js";
 import { RouterProvider } from "react-router-dom";
-import HomePage from "../Pages/Home/HomePage.jsx";
-import LoginPage from "../Pages/Login/LoginPage.jsx";
+import {HomePage,SignupPage,LoginPage} from './Pages/index.js'
 import { createBrowserRouter } from "react-router-dom";
 import './index.css'
 import SignupPage from "../Pages/Signup/SignupPage.jsx";
