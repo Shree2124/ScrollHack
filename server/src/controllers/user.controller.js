@@ -3,6 +3,7 @@ import { ApiError } from "../utils/apiError.js"
 import { ApiResponse } from "../utils/apiResponse.js"
 import jwt from "jsonwebtoken"
 import { User } from "../models/users.model.js"
+import sendMail from "../middlewares/sendMail.middleware.js"
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -40,21 +41,38 @@ const registerUser = asyncHandler(async (req, res) => {
     if (existedUser) {
         throw new ApiError(409, "User with email or username already exists");
     }
-    const user = await User.create({
+    
+    const user = {
         fullName,
+        username,
         email,
         password,
-        username: username,
-    });
-    const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken"
+      };
+
+    const otp = Math.floor(Math.random() * 1000000);
+
+    const activationToken = jwt.sign(
+        {
+            user,
+            otp,
+        },
+        process.env.ACTIVATION_SECRET,
+        {
+            expiresIn: "5m",
+        }
     );
-    if (!createdUser) {
-        throw new ApiError(500, "Something went wrong while registering the user");
-    }
-    return res
-        .status(201)
-        .json(new ApiResponse(200, createdUser, "User registered Successfully"));
+
+    const data = {
+        username,
+        otp,
+    };
+
+    await sendMail(email, "E learning", data);
+
+    res.status(200).json({
+        message: "Otp send to your mail",
+        activationToken,
+    });
 })
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -125,6 +143,35 @@ const logoutUser = asyncHandler(async (req, res) => {
         .clearCookie("refreshToken", options)
         .json(new ApiResponse(200, {}, "User logged Out"));
 });
+
+const verifyUser = asyncHandler(async (req, res) => {
+    const { otp, activationToken } = req.body;
+
+    const verify = jwt.verify(activationToken, process.env.Activation_Secret);
+    console.log(verify);
+    
+
+    if (!verify)
+        return res.status(400).json({
+            message: "Otp Expired",
+        });
+
+    if (verify.otp !== otp)
+        return res.status(400).json({
+            message: "Wrong Otp",
+        });
+
+    await User.create({
+        username: verify.user.username,
+        email: verify.user.email,
+        fullName: verify.user.fullName,
+        password: verify.user.password,
+    });
+
+    res.json({
+        message: "User Registered",
+    });
+})
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken =
@@ -211,6 +258,7 @@ export {
     registerUser,
     loginUser,
     logoutUser,
+    verifyUser,
     refreshAccessToken,
     getCurrentUser,
     updateAccountDetails
