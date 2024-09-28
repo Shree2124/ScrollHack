@@ -9,9 +9,11 @@ import {
 } from "@mui/material";
 import axios from "../utils/axios.js";
 import Container from "./container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     fullName: "",
@@ -42,6 +44,7 @@ const Register = () => {
         })
         .then((res) => {
           console.log("Registration success:", res.data);
+          navigate(`/auth/otp-verification/${res.data.activationToken}`)
         });
     } catch (err) {
       setError(err?.response?.data?.message || "Registration failed");

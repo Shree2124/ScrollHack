@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { TextField, Button, Box, Paper, Typography } from "@mui/material";
-import Container from '../../components/container'; 
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-
+import Container from "../../components/container";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axiosInstance from "../../utils/axios";
 
 const OtpVerification = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -22,19 +20,21 @@ const OtpVerification = () => {
       [name]: value,
     });
   };
+  const { activationToken } = useParams();
+  console.log(activationToken);
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       await axiosInstance
-        .post("/user/verify-otp", {
+        .post("/user/verify", {
           otp: formData.otp,
+          activationToken,
         })
         .then((res) => {
-          dispatch(setUser(res.data.user));
-          dispatch(setLoading(false));
-          dispatch(setError(false));
-          navigate("/all-courses"); // Navigate to dashboard on successful OTP verification
+          console.log(res);
+          navigate("/login");
         });
     } catch (error) {
       console.log(error);
@@ -88,7 +88,7 @@ const OtpVerification = () => {
             )}
 
             <Typography variant="body2" align="center">
-              Didn't receive an OTP?{" "}
+              Didn&apos;t receive an OTP?{" "}
               <span>
                 <Link
                   to="#"

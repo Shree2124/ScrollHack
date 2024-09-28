@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         element:<SignupPage/>
       },
       {
-        path:'/auth/otp-verification',
+        path:'/auth/otp-verification/:activationToken',
         element:<OtpVerificationPage/>
       },
       {
