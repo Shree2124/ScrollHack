@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Container,
   TextField,
@@ -10,32 +10,52 @@ import {
   MenuItem,
   Box,
 } from '@mui/material';
+import axiosInstance from '../../utils/axios';
+import { useSelector } from 'react-redux';
 
 const UploadCourse = () => {
   const [courseTitle, setCourseTitle] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
   const [courseCategory, setCourseCategory] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
-  const [tags, setTags] = useState(''); 
+  const [tags, setTags] = useState('');
+  const [price, setPrice] = useState('');
+  const [courseDuration, setCourseDuration] = useState(null); 
+  const { user } = useSelector(state => state.auth);
 
   const tagsArray = tags.split(',').map((tag) => tag.trim());
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic (e.g., send data to the server)
-    console.log({
-      courseTitle,
-      courseDescription,
-      courseCategory,
-      thumbnail,
-      tags:tagsArray
-    });
+    if (!thumbnail) {
+      alert("Please upload a thumbnail image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', courseTitle);
+    formData.append('description', courseDescription);
+    formData.append('category', courseCategory);
+    formData.append('duration', courseDuration);
+    formData.append('createdBy', user._id);
+    formData.append('price', price);
+    formData.append('tags', JSON.stringify(tagsArray));
+    formData.append('image', thumbnail); 
+
+    try {
+      const response = await axiosInstance.post("/course/new", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // Set the content type for file uploads
+        }
+      });
+      console.log('Course created successfully:', response.data);
+    } catch (error) {
+      console.log('Error creating course:', error);
+    }
   };
 
-  
-
   const handleThumbnailChange = (e) => {
-    setThumbnail(e.target.files[0]);
+    setThumbnail(e.target.files[0]); // Set the first file only
   };
 
   return (
@@ -88,12 +108,34 @@ const UploadCourse = () => {
             </Box>
             <Box item xs={12}>
               <TextField
+                type='number'
+                label="Duration"
+                variant="outlined"
+                fullWidth
+                value={courseDuration}
+                onChange={(e) => setCourseDuration(e.target.value)}
+                required
+              />
+            </Box>
+            <Box item xs={12}>
+              <TextField
                 label="Tags (comma separated)"
                 variant="outlined"
                 fullWidth
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="e.g., JavaScript, React, Node.js"
+                required
+              />
+            </Box>
+            <Box item xs={12}>
+              <TextField
+                label="Price"
+                variant="outlined"
+                fullWidth
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Rupees"
                 required
               />
             </Box>

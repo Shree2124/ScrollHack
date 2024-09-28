@@ -18,7 +18,7 @@ const CreateCourse = () => {
   const [courseDescription, setCourseDescription] = useState('');
   const [courseCategory, setCourseCategory] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
-  const [courseDuration, setCourseDuration] = useState(null);
+  
   const {user} = useSelector
 
   const handleSubmit = (e) => {
