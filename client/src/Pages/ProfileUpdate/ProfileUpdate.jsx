@@ -18,7 +18,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const UserProfile = () => {
-  // Pre-filled user data (replace with actual data from your API)
+
   const initialUserData = {
     username: 'johndoe',
     email: 'johndoe@example.com',
@@ -55,7 +55,7 @@ const UserProfile = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     
-    // Dummy previous password for validation (replace with your actual logic)
+
     const actualPreviousPassword = 'currentPassword'; 
 
     if (userDetails.previousPassword !== actualPreviousPassword) {
@@ -68,7 +68,7 @@ const UserProfile = () => {
       return;
     }
 
-    // Here you would typically send userDetails to your API to update the user profile
+
     console.log('User details submitted:', userDetails);
     setSnackbarMessage('Profile updated successfully!');
     setSnackbarOpen(true);

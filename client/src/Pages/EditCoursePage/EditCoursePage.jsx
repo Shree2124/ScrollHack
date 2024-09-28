@@ -15,6 +15,7 @@ import {
 import { Container } from '../../components';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate,Link,useParams } from 'react-router-dom';
 
 const EditCourse = () => {
   // Temporary data for course modules

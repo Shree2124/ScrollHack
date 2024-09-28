@@ -11,11 +11,11 @@ import {
 import { Container } from '../../components';
 import { Link, useParams } from 'react-router-dom';
 
-// Temporary data for the course
+
 const courseDetails = {
   title: 'Course Title',
   description: 'This is a brief description of the course for which the payment failed.',
-  imageUrl: 'https://via.placeholder.com/150', // Replace with actual image URL
+  imageUrl: 'https://via.placeholder.com/150',
 };
 
 const PaymentFailurePage = () => {

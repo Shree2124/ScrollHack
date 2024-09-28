@@ -5,6 +5,7 @@ const initialState = {
     user: null,
     loading: true,
     error: null,
+    activationCode:null
 };
 
 const authSlice = createSlice({
@@ -26,10 +27,13 @@ const authSlice = createSlice({
             state.user = null;
             state.loading = false;
         },
+        setActivationCode:(state) => {
+            state.activationCode = action.payload
+        }
     },
 });
 
-export const { setUser, setError, setLoading, clearUser } = authSlice.actions;
+export const { setUser, setError, setLoading, clearUser,setActivationCode } = authSlice.actions;
 
 const getCookieToken = (tokenName) => {
     const token = document.cookie.split('; ').find(row => row.startsWith(`${tokenName}=`));

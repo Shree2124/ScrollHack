@@ -1,60 +1,15 @@
-// import { useState } from "react";
-// import axios from "../utils/axios.js";
-
-// const Login = () => {
-//   const [username, setUsername] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     try {
-//       await axios.post("/user/login", { username, password }).then((res) => {
-//         console.log("Login success:", res.data);
-//       });
-//     } catch (err) {
-//       setError(err.response?.data?.message || "Login failed");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h1>Login</h1>
-//       <form onSubmit={handleLogin} >
-//         <input
-//           type="text"
-//           placeholder="Username"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//           required
-//         />
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           required
-//         />
-//         <button type="submit">Login</button>
-//       </form>
-//       {error && <p style={{ color: "red" }}>{error}</p>}
-//     </div>
-//   );
-// };
-
-// export default Login;
 
 import { useState } from "react";
 import { TextField, Button, Box, Paper, Typography } from "@mui/material";
 import Container from "./container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axios";
 import {useDispatch} from "react-redux"
 import { setError, setLoading, setUser } from "../redux/slices/authSlice";
 
 const Login = () => {
   const dispatch = useDispatch()
-
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -81,6 +36,8 @@ const Login = () => {
           dispatch(setLoading(false))
           dispatch(setError(false))
         });
+
+        navigate('all-courses')
     } catch (error) {
       console.log(error);
     }

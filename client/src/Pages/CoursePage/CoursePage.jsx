@@ -13,7 +13,7 @@ import {
   IconButton,
   Drawer,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu"; // Make sure this import is correct
+import MenuIcon from "@mui/icons-material/Menu"; 
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 // Example data for the modules

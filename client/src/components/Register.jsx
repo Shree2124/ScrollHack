@@ -9,7 +9,10 @@ import {
 } from "@mui/material";
 import axios from "../utils/axios.js";
 import Container from "./container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setActivationCode } from "../redux/slices/authSlice.js";
+import axiosInstance from "../utils/axios.js";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +23,7 @@ const Register = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -29,20 +33,20 @@ const Register = () => {
     });
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios
-        .post("/user/register", { username: formData.username,
-          email: formData.email,
-          password:formData.password,
-          fullName: formData.fullName 
-        })
-        .then((res) => {
-          console.log("Registration success:", res.data);
-        });
+      const { data } = await axiosInstance.post("/user/register", {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        role: formData.role,
+      });
+
+      console.log(data.activationToken);
+
+      navigate(`/auth/otp-verification/${data.activationToken}`);
     } catch (err) {
       setError(err?.response?.data?.message || "Registration failed");
     }
@@ -56,7 +60,7 @@ const Register = () => {
           maxWidth: 400,
           margin: "auto",
           boxShadow: 3,
-           // Increased shadow level (1 to 24)
+          // Increased shadow level (1 to 24)
         }}
       >
         <Typography variant="h5" gutterBottom align="center">

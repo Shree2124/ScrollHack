@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { TextField, Button, Box, Paper, Typography } from "@mui/material";
 import Container from '../../components/container'; 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
+import axiosInstance from "../../utils/axios";
+import useAuth from "../../hooks/useAuth";
 
 const OtpVerification = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const{activationToken} = useParams()
   const [formData, setFormData] = useState({
     otp: "",
   });
@@ -25,17 +26,20 @@ const OtpVerification = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(formData.otp);
+    
     try {
       await axiosInstance
-        .post("/user/verify-otp", {
+        .post("/user/verify", {
           otp: formData.otp,
+          activationToken:activationToken
         })
         .then((res) => {
           dispatch(setUser(res.data.user));
           dispatch(setLoading(false));
           dispatch(setError(false));
-          navigate("/all-courses"); // Navigate to dashboard on successful OTP verification
         });
+        navigate("/login"); 
     } catch (error) {
       console.log(error);
       setErrorMessage("Invalid OTP. Please try again.");
