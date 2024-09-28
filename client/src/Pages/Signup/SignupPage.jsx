@@ -1,6 +1,6 @@
-import { Container } from '@mui/material'
+
 import React from 'react'
-import Register from '../../src/components/register'
+import {Container,Register} from '../../components/index'
 
 const SignupPage = () => {
   return (

@@ -1,55 +1,3 @@
-// import { useState } from "react";
-
-
-// const Register = () => {
-//   const [username, setUsername] = useState("");
-//   const [fullName, setFullName] = useState("");
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-
-
-
-//   return (
-//     <div>
-//       <h1>Register</h1>
-//       <form onSubmit={handleRegister}>
-//         <input
-//           type="text"
-//           placeholder="Username"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//           required
-//         />
-//         <input
-//           type="text"
-//           placeholder="Full name"
-//           value={fullName}
-//           onChange={(e) => setFullName(e.target.value)}
-//           required
-//         />
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//           required
-//         />
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           required
-//         />
-//         <button type="submit">Register</button>
-//       </form>
-//       {error && <p style={{ color: "red" }}>{error}</p>}
-//     </div>
-//   );
-// };
-
-// export default Register;
-
 import React, { useState } from "react";
 import {
   TextField,
@@ -61,6 +9,7 @@ import {
 } from "@mui/material";
 import axios from "../utils/axios.js";
 import Container from "./container";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -86,7 +35,7 @@ const Register = () => {
     e.preventDefault();
     try {
       await axios
-        .post("/user/register", { username, fullName, email, password })
+        .post("/user/login", { username, password })
         .then((res) => {
           console.log("Registration success:", res.data);
         });
@@ -105,8 +54,8 @@ const Register = () => {
           boxShadow: 3, // Increased shadow level (1 to 24)
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          User Registration
+        <Typography variant="h5" gutterBottom align="center">
+          Resgister yourself
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box display="flex" flexDirection="column" gap={2}>
@@ -141,7 +90,7 @@ const Register = () => {
                 required
               >
                 <MenuItem value="admin">Admin</MenuItem>
-                <MenuItem value="user">User</MenuItem>
+                <MenuItem value="user">Student</MenuItem>
               </TextField>
             </Box>
             <Box item xs={12}>
@@ -176,6 +125,16 @@ const Register = () => {
                 Submit
               </Button>
             </Box>
+            <Typography variant="h10" gutterBottom>
+              Already have an account?
+              <span>
+                {" "}
+                <Link to="/login" className="text-blue-500">
+                  {" "}
+                  login here{" "}
+                </Link>
+              </span>
+            </Typography>
           </Box>
         </form>
       </Paper>
