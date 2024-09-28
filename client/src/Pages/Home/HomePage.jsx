@@ -3,7 +3,6 @@ import { Container, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { keyframes } from '@mui/system';
-
 // Animation keyframes
 const fadeIn = keyframes`
   from {
@@ -22,23 +21,27 @@ const AnimatedBox = styled(Box)({
   textAlign: 'center',
   color: 'white',
   padding: '20px',
-  backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent background
+  backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   borderRadius: '8px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 16,
+  margin: 'auto',
+  maxWidth: '800px', 
 });
 
 const HomePage = () => {
   return (
+   
     <Box
-      sx={{
-        backgroundImage: 'url("/path/to/your/background.jpg")', // Replace with your background image
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '100vh',
+      sx={{   
+        minHeight:'550px',
         width: '100vw',
-        overflow: 'hidden', // Hide overflow
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        overflow: 'hidden',
+        marginBottom:'3rem'
       }}
     >
       <AnimatedBox>
@@ -48,17 +51,19 @@ const HomePage = () => {
         <Typography variant="h5" component="h2" gutterBottom>
           Your gateway to knowledge and skill enhancement!
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" component="p">
           We offer a variety of courses designed to help you learn new skills and advance your career.
           Our platform features interactive content, video tutorials, and comprehensive resources to enhance your learning experience.
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" component="p">
           Whether you're a beginner or an experienced learner, we have something for everyone.
           Join our community of learners today and start your journey towards mastering new skills!
         </Typography>
         <Link to="/courses" style={{ textDecoration: 'none' }}>
           <Button variant="contained" color="primary" size="large">
+            <Link to='/login'>
             Get Started
+            </Link>
           </Button>
         </Link>
       </AnimatedBox>

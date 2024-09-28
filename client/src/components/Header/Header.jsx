@@ -24,8 +24,23 @@ const Header = () => {
     { id: 3, name: "Signup", current: false, to: "/signup" },
   ]);
 
+  const [userOptions,setUserOptions] = useState([
+    {id:1,name:"Home",current:false,to:"/"},
+    {id:2, name:"All Courses", current:false, to:"/all-courses"},
+    {id:3, name:"Enrolled Courses", current:false, to:"/enrolled-courses"}
+  ])
+
   const handleClick = (id) => {
     setItems(
+      items.map((item) =>
+        item.id === id
+          ? { ...item, current: true }
+          : { ...item, current: false }
+      )
+    );
+  };
+  const handleOptionClick = (id) => {
+    setUserOptions(
       items.map((item) =>
         item.id === id
           ? { ...item, current: true }
@@ -58,9 +73,10 @@ const Header = () => {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center"></div>
-            <div className="hidden sm:ml-6 sm:block">
+            {!user ? (<div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {items.map((item) => (
+                  
                   <Link
                     key={item.name}
                     to={item.to}
@@ -77,9 +93,34 @@ const Header = () => {
                   >
                     {item.name}
                   </Link>
+                 
                 ))}
               </div>
-            </div>
+            </div>):(<div className="hidden sm:ml-6 sm:block">
+              <div className="flex space-x-4">
+                {userOptions.map((item) => (
+                  
+                  <Link
+                    key={item.name}
+                    to={item.to}
+                    aria-current={item.current ? "page" : undefined}
+                    className={classNames(
+                      item.current
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "rounded-md px-3 py-2 text-sm font-medium"
+                    )}
+                    onClick={() => {
+                      handleOptionClick(item.id);
+                    }}
+                  >
+                    {item.name}
+                  </Link>
+                 
+                ))}
+              </div>
+            </div>)}
+            
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             {/* Profile dropdown */}
