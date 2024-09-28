@@ -41,13 +41,13 @@ const registerUser = asyncHandler(async (req, res) => {
     if (existedUser) {
         throw new ApiError(409, "User with email or username already exists");
     }
-    
+
     const user = {
         fullName,
         username,
         email,
         password,
-      };
+    };
 
     const otp = Math.floor(Math.random() * 1000000);
 
@@ -146,17 +146,22 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const verifyUser = asyncHandler(async (req, res) => {
     const { otp, activationToken } = req.body;
-
-    const verify = jwt.verify(activationToken, process.env.Activation_Secret);
-    console.log(verify);
+    console.log(otp, activationToken);
     
+
+    const verify = jwt.verify(activationToken, process.env.ACTIVATION_SECRET);
+    console.log(verify);
+
 
     if (!verify)
         return res.status(400).json({
             message: "Otp Expired",
         });
 
-    if (verify.otp !== otp)
+        console.log(verify.otp === Number(otp));
+        
+
+    if (!(verify.otp === Number(otp)))
         return res.status(400).json({
             message: "Wrong Otp",
         });

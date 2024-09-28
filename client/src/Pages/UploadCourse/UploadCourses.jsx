@@ -16,6 +16,9 @@ const UploadCourse = () => {
   const [courseDescription, setCourseDescription] = useState('');
   const [courseCategory, setCourseCategory] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
+  const [tags, setTags] = useState(''); 
+
+  const tagsArray = tags.split(',').map((tag) => tag.trim());
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,8 +28,11 @@ const UploadCourse = () => {
       courseDescription,
       courseCategory,
       thumbnail,
+      tags:tagsArray
     });
   };
+
+  
 
   const handleThumbnailChange = (e) => {
     setThumbnail(e.target.files[0]);
@@ -79,6 +85,17 @@ const UploadCourse = () => {
                 <MenuItem value="Music">Music</MenuItem>
                 {/* Add more categories as needed */}
               </Select>
+            </Box>
+            <Box item xs={12}>
+              <TextField
+                label="Tags (comma separated)"
+                variant="outlined"
+                fullWidth
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="e.g., JavaScript, React, Node.js"
+                required
+              />
             </Box>
             <Box item xs={12}>
               <input

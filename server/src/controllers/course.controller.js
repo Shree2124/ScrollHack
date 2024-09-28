@@ -195,28 +195,24 @@ const getYourProgress = asyncHandler(async (req, res) => {
     });
 });
 
-
 const fetchCourseRecommendations = asyncHandler(async (req, res) => {
     const userId = req.user._id;
+    const user = await User.findById(userId).populate('subscription');
 
-        const user = await User.findById(userId).populate('subscription');
-        const subscribedCourses = user.subscription;
+    let tags = [];
+    if (user && user.subscription.length) {
+        tags = user.subscription.flatMap(course => course.tags);
+    }
+    if (!tags.length) {
+        tags = ['Programming', 'Web Development', 'Data Science']; 
+    }
 
-        if (!subscribedCourses || subscribedCourses.length === 0) {
-            return res.status(200).json({ message: 'No subscriptions found for recommendations.' });
-        }
+    const recommendedCourses = await Courses.find({
+        _id: { $nin: user.subscription }, 
+        tags: { $in: tags }
+    }).limit(10);
 
-        const subscribedCourseIds = subscribedCourses.map(course => course._id.toString());
-
-        const recombeeResponse = await client.send(new rqs.RecommendItemsToUser(userId, 5, {
-            filter: `id != [${subscribedCourseIds.join(",")}]`, // Exclude subscribed courses
-        }));
-
-        const recommendedCourseIds = recombeeResponse.recommendations.map(item => item.id);
-
-        const recommendedCourses = await Courses.find({ _id: { $in: recommendedCourseIds } });
-
-        return res.status(200).json({ recommendedCourses });
+    return res.status(200).json({ recommendedCourses });
 });
 
 
