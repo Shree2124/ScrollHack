@@ -11,6 +11,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import axiosInstance from "../utils/axios.js"
+import {useSelector } from "react-redux"
 
 const CreateCourse = () => {
   const [courseTitle, setCourseTitle] = useState('');
@@ -18,7 +19,7 @@ const CreateCourse = () => {
   const [courseCategory, setCourseCategory] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
   const [courseDuration, setCourseDuration] = useState(null);
-  const {user} = 
+  const {user} = useSelector
 
   const handleSubmit = (e) => {
     e.preventDefault();
