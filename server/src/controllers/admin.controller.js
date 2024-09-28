@@ -7,20 +7,22 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 
 const createCourse = asyncHandler(async (req, res) => {
-    const { title, description, category, createdBy, duration, price } = req.body
-
-
+    const { title, description, category, createdBy, duration, price, tags } = req.body;
     let imgLocalFilePath;
     if (req?.files?.image && Array.isArray(req?.files?.image) && req?.files?.image?.length > 0) {
         imgLocalFilePath = req?.files?.image[0]?.path;
     }
     if (!imgLocalFilePath) {
-        new ApiError(500, "Failed to upload image")
+        throw new ApiError(500, "Failed to upload image");
     }
-    const uploadImage = await uploadOnCloudinary(imgLocalFilePath)
+
+    const uploadImage = await uploadOnCloudinary(imgLocalFilePath);
     if (!uploadImage) {
-        new ApiError(400, "Image is required")
+        throw new ApiError(400, "Image is required");
     }
+
+    const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+
     const course = await Courses.create({
         title,
         description,
@@ -29,12 +31,13 @@ const createCourse = asyncHandler(async (req, res) => {
         image: uploadImage?.url,
         duration,
         price,
-    })
-
+        tags:tagsArray,
+    });
     return res.status(200).json(
         new ApiResponse(201, course, "Course created successfully")
-    )
-})
+    );
+});
+
 
 const addLectures = asyncHandler(async (req, res) => {
     const course = await Courses.findById(req?.params?.id);

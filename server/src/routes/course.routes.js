@@ -13,6 +13,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
+
 router.get("/course/all", getAllCourses);
 router.get("/course/:id", getSingleCourse);
 router.get("/lectures/:id", verifyJWT, fetchLectures);
