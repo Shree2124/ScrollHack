@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Container,
   TextField,
@@ -9,24 +9,34 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Box,
 } from '@mui/material';
+import axiosInstance from "../utils/axios.js"
 
 const CreateCourse = () => {
   const [courseTitle, setCourseTitle] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
   const [courseCategory, setCourseCategory] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
+  const [courseDuration, setCourseDuration] = useState(null);
+  const {user} = 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic (e.g., send data to the server)
     console.log({
       courseTitle,
       courseDescription,
       courseCategory,
       thumbnail,
+      
     });
+
+    axiosInstance.post("/course/new",{
+      title: courseTitle,
+      description:courseDescription,
+      category: courseCategory,
+      duration: courseDuration,
+      createdBy: 
+    })
   };
 
   const handleThumbnailChange = (e) => {
@@ -78,8 +88,18 @@ const CreateCourse = () => {
                 <MenuItem value="Business">Business</MenuItem>
                 <MenuItem value="Photography">Photography</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
-                {/* Add more categories as needed */}
               </Select>
+            </Box>
+            <Box item xs={12}>
+              <TextField
+                type='number'
+                label="Duration"
+                variant="outlined"
+                fullWidth
+                value={courseDuration}
+                onChange={(e) => setCourseDuration(e.target.value)}
+                required
+              />
             </Box>
             <Box item xs={12}>
               <input
