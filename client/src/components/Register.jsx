@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   TextField,
   Button,
@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 const Register = () => {
   const [formData, setFormData] = useState({
     username: "",
-    fullname: "",
+    fullName: "",
     role: "",
     email: "",
     password: "",
@@ -35,12 +35,16 @@ const Register = () => {
     e.preventDefault();
     try {
       await axios
-        .post("/user/login", { username, password })
+        .post("/user/register", { username: formData.username,
+          email: formData.email,
+          password:formData.password,
+          fullName: formData.fullName 
+        })
         .then((res) => {
           console.log("Registration success:", res.data);
         });
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      setError(err?.response?.data?.message || "Registration failed");
     }
   };
 
@@ -73,8 +77,8 @@ const Register = () => {
               <TextField
                 fullWidth
                 label="Full Name"
-                name="fullname"
-                value={formData.fullname}
+                name="fullName"
+                value={formData.fullName}
                 onChange={handleChange}
                 required
               />
@@ -134,6 +138,9 @@ const Register = () => {
                   login here{" "}
                 </Link>
               </span>
+            </Typography>
+            <Typography variant="h10" color="warning" gutterBottom>
+              {error}
             </Typography>
           </Box>
         </form>

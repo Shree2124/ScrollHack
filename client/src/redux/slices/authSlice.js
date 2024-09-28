@@ -54,7 +54,7 @@ export const fetchUser = () => async (dispatch) => {
         if (error.response?.status === 401) {
             try {
                 const refreshToken = getCookieToken('refreshToken');
-                const refreshResponse = await axiosInstance.post('/user/refresh-tokens', {
+                const refreshResponse = await axiosInstance.post('/user/refresh-token', {
                     refreshToken,
                 });
                 document.cookie = `accessToken=${refreshResponse.data.accessToken}; path=/; secure; SameSite=Lax`;

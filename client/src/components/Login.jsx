@@ -44,19 +44,17 @@
 
 // export default Login;
 
-import React, { useState } from "react";
-import {
-  TextField,
-  Button,
-  MenuItem,
-  Box,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { useState } from "react";
+import { TextField, Button, Box, Paper, Typography } from "@mui/material";
 import Container from "./container";
 import { Link } from "react-router-dom";
+import axiosInstance from "../utils/axios";
+import {useDispatch} from "react-redux"
+import { setError, setLoading, setUser } from "../redux/slices/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch()
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -70,10 +68,22 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData);
-    // Handle form submission, e.g., send data to an API
+    try {
+      await axiosInstance
+        .post("/user/login", {
+          username: formData.username,
+          password: formData.password
+        })
+        .then((res) => {
+          dispatch(setUser(res.data.user))
+          dispatch(setLoading(false))
+          dispatch(setError(false))
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -126,7 +136,7 @@ const Login = () => {
               </Button>
             </Box>
             <Typography variant="h10" gutterBottom>
-              Don't have an account?
+              Don&apos;t have an account?
               <span>
                 {" "}
                 <Link to="/signup" className="text-blue-500">
