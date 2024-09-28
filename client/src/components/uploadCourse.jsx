@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Container,
   TextField,
@@ -9,7 +9,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Box,
 } from '@mui/material';
 
 const CreateCourse = () => {
@@ -20,7 +19,6 @@ const CreateCourse = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic (e.g., send data to the server)
     console.log({
       courseTitle,
       courseDescription,
