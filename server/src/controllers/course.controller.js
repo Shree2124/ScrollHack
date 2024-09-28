@@ -209,7 +209,7 @@ const fetchCourseRecommendations = asyncHandler(async (req, res) => {
         const subscribedCourseIds = subscribedCourses.map(course => course._id.toString());
 
         const recombeeResponse = await client.send(new rqs.RecommendItemsToUser(userId, 5, {
-            filter: `id != [${subscribedCourseIds.join(",")}]`, // Exclude subscribed courses
+            filter: `id != [${subscribedCourseIds.join(",")}]`,
         }));
 
         const recommendedCourseIds = recombeeResponse.recommendations.map(item => item.id);
