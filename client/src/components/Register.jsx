@@ -55,11 +55,12 @@ const Register = () => {
           padding: 2,
           maxWidth: 400,
           margin: "auto",
-          boxShadow: 3, // Increased shadow level (1 to 24)
+          boxShadow: 3,
+           // Increased shadow level (1 to 24)
         }}
       >
         <Typography variant="h5" gutterBottom align="center">
-          Resgister yourself
+          Register yourself
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box display="flex" flexDirection="column" gap={2}>
