@@ -7,6 +7,7 @@ import { User } from "../models/users.model.js"
 import { Progress } from "../models/progress.model.js"
 import Stripe from 'stripe';
 import { Payment } from "../models/payment.model.js"
+import { getCourseRecommendations } from "../utils/getCourseRecommendations.js"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -19,6 +20,8 @@ const getAllCourses = asyncHandler(async (req, res) => {
 })
 
 const getSingleCourse = asyncHandler(async (req, res) => {
+    console.log(req.params.id);
+
     const course = await Courses.findById(req.params.id)
     res.status(200)
         .json(
@@ -92,7 +95,7 @@ const checkout = asyncHandler(async (req, res) => {
             },
         ],
         mode: 'payment',
-        success_url: `${process.env.CLIENT_URL}/success`,
+        success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.CLIENT_URL}/cancel`,
         customer_email: user.email,
         metadata: {
@@ -109,7 +112,7 @@ const checkout = asyncHandler(async (req, res) => {
 
 const paymentVerification = asyncHandler(async (req, res) => {
     console.log(req?.params);
-    
+
     const session = await stripe?.checkout?.sessions?.retrieve(req?.params?.id);
 
     if (session?.payment_status === 'paid') {
@@ -122,8 +125,8 @@ const paymentVerification = asyncHandler(async (req, res) => {
             amount_total: session.amount_total,
             currency: session.currency,
             customer_email: session.customer_email,
-            cancel_url:`${process.env.CLIENT_URL}/success`,
-            success_url:`${process.env.CLIENT_URL}/cancel`
+            cancel_url: `${process.env.CLIENT_URL}/success`,
+            success_url: `${process.env.CLIENT_URL}/cancel`
         });
 
         const user = await User.findById(userId);
@@ -138,8 +141,11 @@ const paymentVerification = asyncHandler(async (req, res) => {
             user: userId,
         });
 
+        const recommendedCourses = await getCourseRecommendations(userId);
+
         res.status(200).json({
             message: "Course Purchased Successfully",
+            recommendedCourses
         });
     } else {
         return res.status(400).json({
@@ -190,6 +196,30 @@ const getYourProgress = asyncHandler(async (req, res) => {
 });
 
 
+const fetchCourseRecommendations = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+
+        const user = await User.findById(userId).populate('subscription');
+        const subscribedCourses = user.subscription;
+
+        if (!subscribedCourses || subscribedCourses.length === 0) {
+            return res.status(200).json({ message: 'No subscriptions found for recommendations.' });
+        }
+
+        const subscribedCourseIds = subscribedCourses.map(course => course._id.toString());
+
+        const recombeeResponse = await client.send(new rqs.RecommendItemsToUser(userId, 5, {
+            filter: `id != [${subscribedCourseIds.join(",")}]`, // Exclude subscribed courses
+        }));
+
+        const recommendedCourseIds = recombeeResponse.recommendations.map(item => item.id);
+
+        const recommendedCourses = await Courses.find({ _id: { $in: recommendedCourseIds } });
+
+        return res.status(200).json({ recommendedCourses });
+});
+
+
 export {
     getAllCourses,
     getSingleCourse,
@@ -199,5 +229,6 @@ export {
     checkout,
     paymentVerification,
     addProgress,
-    getYourProgress
+    getYourProgress,
+    fetchCourseRecommendations
 }
