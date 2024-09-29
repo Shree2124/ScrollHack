@@ -1,5 +1,4 @@
 
-import React from 'react'
 import {Container,Register} from '../../components/index'
 
 const SignupPage = () => {
