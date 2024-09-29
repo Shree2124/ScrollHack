@@ -122,17 +122,14 @@ const router = createBrowserRouter([
         ),
       },
       {
-<<<<<<< HEAD
         path: "/payment-successful/:courseId",
         element: (
           <AuthLayout allowedRoles={ROLES.user}>
             <PaymentSuccessful />
-=======
         path:'/admin/owned-courses',
         element:(
           <AuthLayout allowedRoles={ROLES.Admin}>
             <OwnerCourses/>
->>>>>>> 4f3a7b6652265302e6af0d3c1b8c4d6cb7c65c74
           </AuthLayout>
         )
       },
