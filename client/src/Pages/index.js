@@ -11,6 +11,7 @@ import ProfileUpdate from './ProfileUpdate/ProfileUpdate'
 import PaymentSuccessful from './PaymentSuccess/PaymentSuccess'
 import PaymentFailurePage from './PaymentFailed/PaymentFailed'
 import Unauthorized from './Unauthorized/Unauthorized'
+import OwnerCourses from './OwnedCourses/OwnerCourses'
 export{
     HomePage,
     LoginPage,
@@ -24,5 +25,6 @@ export{
     ProfileUpdate,
     PaymentSuccessful,
     PaymentFailurePage,
-    Unauthorized
+    Unauthorized,
+    OwnerCourses
 }
