@@ -4,71 +4,126 @@ import App from "./App.jsx";
 import { Provider } from "react-redux";
 import store from "./redux/store.js";
 import { RouterProvider } from "react-router-dom";
-import {HomePage,SignupPage,LoginPage,Courses,UploadCourse, AddCourseContent, OtpVerificationPage, CoursePage, EditCoursePage, ProfileUpdate, PaymentSuccessful, PaymentFailurePage} from './Pages/index.js'
+import {
+  HomePage,
+  SignupPage,
+  LoginPage,
+  Courses,
+  UploadCourse,
+  AddCourseContent,
+  OtpVerificationPage,
+  CoursePage,
+  EditCoursePage,
+  ProfileUpdate,
+  PaymentSuccessful,
+  PaymentFailurePage,
+  Unauthorized,
+} from "./Pages/index.js";
 import { createBrowserRouter } from "react-router-dom";
-import './index.css'
+import "./index.css";
+import AuthLayout from "./components/AuthLayout.jsx";
 
+const ROLES = {
+  user: 'user',
+  Admin: 'admin',
+};
 
 const router = createBrowserRouter([
   {
-    path:'/',
-    element:<App/>,
-    children:[
-      { 
-        path:'/',
-       element:<HomePage/>
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <HomePage />,
       },
       {
-        path:'/login',
-        element:<LoginPage/>
+        path: "/login",
+        element: <LoginPage />,
       },
       {
-        path:'/signup',
-        element:<SignupPage/>
+        path: "/signup",
+        element: <SignupPage />,
       },
       {
-        path:'/auth/otp-verification/:activationToken',
-        element:<OtpVerificationPage/>
+        path: "/unauthorized",
+        element: <Unauthorized />,
       },
       {
-        path:'/update-user-profile',
-        element:<ProfileUpdate/>
+        path: "/auth/otp-verification/:activationToken",
+        element: <OtpVerificationPage />,
       },
       {
-        path:'/all-courses',
-        element:<Courses/>
+        path: "/update-user-profile",
+        element: (
+          <AuthLayout allowedRoles={ROLES.user}>
+            <ProfileUpdate />
+          </AuthLayout>
+        ),
       },
       {
-        path:'/course-page/:courseId',
-        element:<CoursePage/>
+        path: "/all-courses",
+        element: (
+          <AuthLayout allowedRoles={ROLES.user}>
+            <Courses />
+          </AuthLayout>
+        ),
       },
       {
-        path:'/admin/upload-course',
-        element:<UploadCourse/>
+        path: "/course-page/:courseId",
+        element: (
+          <AuthLayout allowedRoles={ROLES.user}>
+            <CoursePage />
+          </AuthLayout>
+        ),
       },
       {
-        path:'/admin/add-course-content/:courseId',
-        element:<AddCourseContent/>
+        path: "/admin/upload-course",
+        element: (
+          <AuthLayout allowedRoles={ROLES.Admin}>
+            <UploadCourse />
+          </AuthLayout>
+        ),
       },
       {
-        path:'/admin/edit-course/:courseId',
-        element:<EditCoursePage/>
-      },  
-      {
-        path:'/payment-successfull/:courseId',
-        element:<PaymentSuccessful/>
+        path: "/admin/add-course-content/:courseId",
+        element: (
+          <AuthLayout allowedRoles={ROLES.Admin}>
+            <AddCourseContent />
+          </AuthLayout>
+        ),
       },
       {
-        path:'/payment-fail/:courseId',
-        element:<PaymentFailurePage/>
-      }
-    ]
-  }
-])
+        path: "/admin/edit-course/:courseId",
+        element: (
+          <AuthLayout allowedRoles={ROLES.Admin}>
+            <EditCoursePage />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/payment-successfull/:courseId",
+        element: (
+          <AuthLayout allowedRoles={ROLES.user}>
+            <PaymentSuccessful />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/payment-fail/:courseId",
+        element: (
+          <AuthLayout allowedRoles={ROLES.user}>
+            <PaymentFailurePage />
+          </AuthLayout>
+        ),
+      },
+    ],
+  },
+]);
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router}/>
+      <RouterProvider router={router} />
     </Provider>
   </StrictMode>
 );
