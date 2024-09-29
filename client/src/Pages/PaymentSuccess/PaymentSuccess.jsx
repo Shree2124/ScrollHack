@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container as MuiContainer,
   Typography,
@@ -55,6 +55,8 @@ const PaymentSuccessPage = () => {
     try {
       if (sessionId) {
         const response = await axiosInstance.post(`/verification/${sessionId}`);
+        console.log(response);
+        
         // setPaymentDetails(response.data);
       } else {
         // setError("Session ID not found.");
@@ -77,8 +79,8 @@ const PaymentSuccessPage = () => {
       setSessionId(session_id);
       verification();
     } else {
-      setLoading(false);
-      setError("No session ID found.");
+      // setLoading(false);
+      // setError("No session ID found.");
     }
   }, [location.search]);
 
