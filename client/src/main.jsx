@@ -19,10 +19,13 @@ import {
   PaymentFailurePage,
   Unauthorized,
   OwnerCourses,
+  EnrolledCourses,
+  UserDetailsPage,
 } from "./Pages/index.js";
 import { createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import AuthLayout from "./components/AuthLayout.jsx";
+
 
 const ROLES = {
   user: "user",
@@ -79,6 +82,22 @@ const router = createBrowserRouter([
             <CoursePage />
           </AuthLayout>
         ),
+      },
+      {
+        path:"/enrolled-courses",
+        element:(
+          <AuthLayout allowedRoles={ROLES.user}>
+            <EnrolledCourses/>
+          </AuthLayout>
+        )
+      },
+      {
+        path:'/user-details',
+        element:(
+          <AuthLayout allowedRoles={ROLES.user}>
+            <UserDetailsPage/>
+          </AuthLayout>
+        )
       },
       {
         path: "/payment-successful/:courseId",
