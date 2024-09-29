@@ -13,6 +13,7 @@ import PaymentFailurePage from './PaymentFailed/PaymentFailed'
 import Unauthorized from './Unauthorized/Unauthorized'
 import OwnerCourses from './OwnedCourses/OwnerCourses'
 import EnrolledCourses from './EnrolledCourses/EnrolledCourses'
+import UserDetailsPage from './UserDetailsPage/UserDetailsPage'
 export{
     HomePage,
     LoginPage,
@@ -28,5 +29,6 @@ export{
     PaymentFailurePage,
     Unauthorized,
     OwnerCourses,
-    EnrolledCourses
+    EnrolledCourses,
+    UserDetailsPage
 }
