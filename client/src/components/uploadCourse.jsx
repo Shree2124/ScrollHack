@@ -4,68 +4,54 @@ import {
   TextField,
   Button,
   Typography,
+  Box,
   Paper,
   InputLabel,
   Select,
   MenuItem,
-  Box,
 } from '@mui/material';
-import axiosInstance from '../../utils/axios';
-import { useSelector } from 'react-redux';
+import axiosInstance from "../utils/axios.js"
+import {useSelector } from "react-redux"
 
-const UploadCourse = () => {
+const CreateCourse = () => {
   const [courseTitle, setCourseTitle] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
   const [courseCategory, setCourseCategory] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
-  const [tags, setTags] = useState('');
-  const [price, setPrice] = useState('');
-  const [courseDuration, setCourseDuration] = useState(null); 
-  const { user } = useSelector(state => state.auth);
+  
+  const {user} = useSelector
 
-  const tagsArray = tags.split(',').map((tag) => tag.trim());
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!thumbnail) {
-      alert("Please upload a thumbnail image.");
-      return;
-    }
+    console.log({
+      courseTitle,
+      courseDescription,
+      courseCategory,
+      thumbnail,
+      
+    });
 
-    const formData = new FormData();
-    formData.append('title', courseTitle);
-    formData.append('description', courseDescription);
-    formData.append('category', courseCategory);
-    formData.append('duration', courseDuration);
-    formData.append('createdBy', user._id);
-    formData.append('price', price);
-    formData.append('tags', JSON.stringify(tagsArray));
-    formData.append('image', thumbnail); 
-
-    try {
-      const response = await axiosInstance.post("/course/new", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data' // Set the content type for file uploads
-        }
-      });
-      console.log('Course created successfully:', response.data);
-    } catch (error) {
-      console.log('Error creating course:', error);
-    }
+    axiosInstance.post("/course/new",{
+      title: courseTitle,
+      description:courseDescription,
+      category: courseCategory,
+      duration: courseDuration,
+      createdBy: 
+    })
   };
 
   const handleThumbnailChange = (e) => {
-    setThumbnail(e.target.files[0]); // Set the first file only
+    setThumbnail(e.target.files[0]);
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>
+    <Container maxWidth="md" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ padding: 3 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Create Course
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Box container spacing={2} display='flex' flexDirection='column' gap={4}>
+          <Box container spacing={2}>
             <Box item xs={12}>
               <TextField
                 label="Course Title"
@@ -103,7 +89,6 @@ const UploadCourse = () => {
                 <MenuItem value="Business">Business</MenuItem>
                 <MenuItem value="Photography">Photography</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
-                {/* Add more categories as needed */}
               </Select>
             </Box>
             <Box item xs={12}>
@@ -114,28 +99,6 @@ const UploadCourse = () => {
                 fullWidth
                 value={courseDuration}
                 onChange={(e) => setCourseDuration(e.target.value)}
-                required
-              />
-            </Box>
-            <Box item xs={12}>
-              <TextField
-                label="Tags (comma separated)"
-                variant="outlined"
-                fullWidth
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                placeholder="e.g., JavaScript, React, Node.js"
-                required
-              />
-            </Box>
-            <Box item xs={12}>
-              <TextField
-                label="Price"
-                variant="outlined"
-                fullWidth
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="Rupees"
                 required
               />
             </Box>
@@ -170,4 +133,4 @@ const UploadCourse = () => {
   );
 };
 
-export default UploadCourse;
+export default CreateCourse;

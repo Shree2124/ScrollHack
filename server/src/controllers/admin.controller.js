@@ -8,6 +8,8 @@ import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 
 const createCourse = asyncHandler(async (req, res) => {
     const { title, description, category, createdBy, duration, price, tags } = req.body;
+    console.log(req.files);
+    
     let imgLocalFilePath;
     if (req?.files?.image && Array.isArray(req?.files?.image) && req?.files?.image?.length > 0) {
         imgLocalFilePath = req?.files?.image[0]?.path;
