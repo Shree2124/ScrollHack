@@ -227,7 +227,7 @@ const Header = () => {
           id: 3,
           name: "Enrolled Courses",
           current: false,
-          to: "/enrolled-courses",
+          to: "/your-courses",
         },
       ];
 
@@ -242,7 +242,9 @@ const Header = () => {
           current: false,
           to: "/admin/upload-course",
         },
-        { id: 5, name: "Your Courses", current: false, to: "/your-courses" },
+        
+        { id: 5, name: "Edit Courses", current: false, to: "/admin/edit-course/:courseId" },
+        { id: 5, name: "Dashboard", current: false, to: "/admin/dashboard" },
       ];
 
       setItems(userItems);

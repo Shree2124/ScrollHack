@@ -6,7 +6,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["https://scroll-hack-4glf.vercel.app"],
+    origin: ["https://scroll-hack-4glf.vercel.app","*"],
     methods: ["POST", "GET", "PUT", "DELETE", "PATCH"],
     preflightContinue: false,
     credentials: true

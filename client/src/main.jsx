@@ -24,7 +24,9 @@ import {
 } from "./Pages/index.js";
 import { createBrowserRouter } from "react-router-dom";
 import "./index.css";
+import { Dashboard } from "./components/index.js";
 import AuthLayout from "./components/AuthLayout.jsx";
+import CourseStudy from "./Pages/coursestudy/CourseStudy.jsx";
 
 
 const ROLES = {
@@ -64,6 +66,22 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout allowedRoles={[ROLES.user]}>
             <ProfileUpdate />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/your-courses",
+        element: (
+          <AuthLayout allowedRoles={[ROLES.user]}>
+            <CourseStudy />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/admin/dashboard",
+        element: (
+          <AuthLayout allowedRoles={[ROLES.Admin]}>
+            <Dashboard />
           </AuthLayout>
         ),
       },

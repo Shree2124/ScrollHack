@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -15,6 +14,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu"; 
 import useMediaQuery from "@mui/material/useMediaQuery";
+import axiosInstance from "../../utils/axios"; // Import your axios instance
 
 // Example data for the modules
 const courseModules = [
@@ -22,31 +22,28 @@ const courseModules = [
     id: 1,
     title: "Introduction to React",
     description: "Learn the basics of React.",
-    videoUrl: "/videos/react-intro.mp4",
   },
   {
     id: 2,
     title: "State Management in React",
     description: "Dive into useState and useReducer.",
-    videoUrl: "/videos/react-state.mp4",
   },
   {
     id: 3,
     title: "React Router",
     description: "Learn how to navigate between pages.",
-    videoUrl: "/videos/react-router.mp4",
   },
   {
     id: 4,
     title: "Advanced React Patterns",
     description: "Explore advanced patterns in React.",
-    videoUrl: "/videos/react-advanced.mp4",
   },
 ];
 
 const CoursePage = () => {
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [lectures, setLectures] = useState([]); // State for lectures
   const currentModule = courseModules[currentModuleIndex];
   const isMobile = useMediaQuery("(max-width: 600px)");
 
@@ -66,6 +63,20 @@ const CoursePage = () => {
     }
   };
 
+  // Fetch lectures for the current module
+  const fetchLectures = async () => {
+    try {
+      const response = await axiosInstance.get(`/lectures/${currentModule.id}`);
+      setLectures(response.data.lecture);
+    } catch (error) {
+      console.error("Error fetching lectures:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLectures(); // Fetch lectures when the module changes
+  }, [currentModuleIndex]); // Run when currentModuleIndex changes
+
   const sidebarContent = (
     <Box sx={{ width: isMobile ? 250 : 300, padding: 2 }}>
       <Typography variant="h6" gutterBottom>
@@ -78,7 +89,10 @@ const CoursePage = () => {
             button
             key={module.id}
             selected={index === currentModuleIndex}
-            onClick={() => setCurrentModuleIndex(index)}
+            onClick={() => {
+              setCurrentModuleIndex(index);
+              fetchLectures(); // Fetch lectures for the selected module
+            }}
           >
             <ListItemText primary={module.title} />
           </ListItem>
@@ -142,7 +156,6 @@ const CoursePage = () => {
           height: "100vh",
           position: "relative",
           zIndex: 1,
-
         }}
       >
         <Typography variant="h4" gutterBottom>
@@ -152,16 +165,31 @@ const CoursePage = () => {
           {currentModule.description}
         </Typography>
 
+        {/* Display lectures */}
+        <Box sx={{ marginTop: 2, marginBottom: 4 }}>
+          <Typography variant="h5">Lectures</Typography>
+          <List>
+            {lectures.length > 0 ? (
+              lectures.map((lecture) => (
+                <ListItem key={lecture._id}>
+                  <ListItemText primary={lecture.title} />
+                </ListItem>
+              ))
+            ) : (
+              <Typography>No lectures available for this module.</Typography>
+            )}
+          </List>
+        </Box>
 
+        {/* Video for current module */}
         <Box sx={{ marginTop: 2, marginBottom: 4 }}>
           <video
             controls
             width="100%"
-            src={currentModule.videoUrl}
+            src={currentModule.videoUrl} 
             alt={currentModule.title}
             style={{ maxHeight: "400px" }}
           >
-            Your browser does not support the video tag.
           </video>
         </Box>
 
@@ -196,4 +224,3 @@ const CoursePage = () => {
 };
 
 export default CoursePage;
-

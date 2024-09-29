@@ -82,14 +82,14 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import axiosInstance from "../../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setStripe } from "../../redux/slices/authSlice";
+// import { setCourses } from "../../redux/slices/authSlice";
 import LinkComponent from "../../components/LinkComponent";
 import { Container } from "../../components";
+import { setCourses } from "../../redux/slices/authSlice";
 
 // eslint-disable-next-line react/prop-types
 const CourseCard = ({ course, isSubscribed }) => {
   const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
 
   const makePayment = async () => {
     try {
@@ -102,7 +102,7 @@ const CourseCard = ({ course, isSubscribed }) => {
         { id: user?.id }
       );
 
-      dispatch(setStripe(response.data.sessionId));
+      // dispatch(setCourses(response.data.sessionId));
 
       const result = stripe?.redirectToCheckout({
         sessionId: response?.data?.sessionId,
@@ -168,6 +168,7 @@ const CourseCard = ({ course, isSubscribed }) => {
 };
 
 const Courses = ({ text = "Available Courses" }) => {
+  const dispatch = useDispatch()
   const [courseContent, setCourseContent] = useState([]);
   const [subscribedCourse, setSubscribedCourse] = useState([]);
 
@@ -175,6 +176,7 @@ const Courses = ({ text = "Available Courses" }) => {
     try {
       const res = await axiosInstance.get("/course/all");
       setCourseContent(res.data.data);
+      dispatch(setCourses(res.data.data))
     } catch (error) {
       console.log(error);
     }

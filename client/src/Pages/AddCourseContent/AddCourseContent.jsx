@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Button,
@@ -8,12 +7,22 @@ import {
   Paper,
   InputLabel,
   TextField,
-} from '@mui/material';
-import { useParams } from 'react-router-dom';
+} from "@mui/material";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../../utils/axios";
+import Loader from "../../components/Loader";
 
 const ManageCourseModules = () => {
-  const { courseId } = useParams(); 
-  const [modules, setModules] = useState([{ title: '', description: '', videoFile: null, pdfFile: null, otherFiles: [] }]);
+  const { courseId } = useParams();
+  const [modules, setModules] = useState([
+    {
+      title: "",
+      description: "",
+      videoFile: null,
+      pdfFile: null,
+      otherFiles: [],
+    },
+  ]);
 
   const handleModuleChange = (index, field, value) => {
     const updatedModules = [...modules];
@@ -27,20 +36,20 @@ const ManageCourseModules = () => {
     setModules(updatedModules);
   };
 
-  const handlePdfChange = (index, e) => {
-    const updatedModules = [...modules];
-    updatedModules[index].pdfFile = e.target.files[0];
-    setModules(updatedModules);
-  };
+  // const handlePdfChange = (index, e) => {
+  //   const updatedModules = [...modules];
+  //   updatedModules[index].pdfFile = e.target.files[0];
+  //   setModules(updatedModules);
+  // };
 
-  const handleOtherFilesChange = (index, e) => {
-    const updatedModules = [...modules];
-    updatedModules[index].otherFiles = [...e.target.files];
-    setModules(updatedModules);
-  };
+  // const handleOtherFilesChange = (index, e) => {
+  //   const updatedModules = [...modules];
+  //   updatedModules[index].otherFiles = [...e.target.files];
+  //   setModules(updatedModules);
+  // };
 
   const addModule = () => {
-    setModules([...modules, { title: '', description: '', videoFile: null, pdfFile: null, otherFiles: [] }]);
+    setModules([...modules, { title: "", description: "", videoFile: null }]);
   };
 
   const deleteModule = (index) => {
@@ -48,11 +57,41 @@ const ManageCourseModules = () => {
     setModules(updatedModules);
   };
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading]=useState(false)
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle submission logic (e.g., send modules data to the server)
-    console.log({ courseId, modules });
+    try {
+      const formData = new FormData();
+      formData.append("title", modules[0].title);
+      formData.append("description", modules[0].description);
+      formData.append("video", modules[0].videoFile);
+      setLoading(true)
+
+      await axiosInstance.post(`/course/${courseId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", 
+        },
+      }).then((res)=>{
+        setLoading(false)
+        console.log(res.data);
+        if(res.data){
+          alert("course added successfully")
+        }
+        
+      }).finally(()=>{
+        setLoading(false)
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  if(loading){
+    return (
+      <Loader/>
+    )
+  }
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 8 }}>
@@ -64,14 +103,22 @@ const ManageCourseModules = () => {
           {modules.map((module, index) => (
             <Paper key={index} sx={{ padding: 2, marginBottom: 2 }}>
               <Typography variant="h6">Module {index + 1}</Typography>
-              <Box container spacing={2} display='flex' flexDirection='column' gap={4}>
+              <Box
+                container
+                spacing={2}
+                display="flex"
+                flexDirection="column"
+                gap={4}
+              >
                 <Box item xs={12}>
                   <TextField
                     label="Module Title"
                     variant="outlined"
                     fullWidth
                     value={module.title}
-                    onChange={(e) => handleModuleChange(index, 'title', e.target.value)}
+                    onChange={(e) =>
+                      handleModuleChange(index, "title", e.target.value)
+                    }
                     required
                   />
                 </Box>
@@ -83,18 +130,22 @@ const ManageCourseModules = () => {
                     multiline
                     rows={3}
                     value={module.description}
-                    onChange={(e) => handleModuleChange(index, 'description', e.target.value)}
+                    onChange={(e) =>
+                      handleModuleChange(index, "description", e.target.value)
+                    }
                     required
                   />
                 </Box>
                 <Box item xs={12}>
-                  <InputLabel id={`video-upload-label-${index}`}>Upload Video</InputLabel>
+                  <InputLabel id={`video-upload-label-${index}`}>
+                    Upload Video
+                  </InputLabel>
                   <input
                     accept="video/*"
                     id={`video-upload-${index}`}
                     type="file"
                     onChange={(e) => handleVideoChange(index, e)}
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                   />
                   <label htmlFor={`video-upload-${index}`}>
                     <Button variant="contained" component="span">
@@ -107,7 +158,7 @@ const ManageCourseModules = () => {
                     </Typography>
                   )}
                 </Box>
-                <Box item xs={12}>
+                {/* <Box item xs={12}>
                   <InputLabel id={`pdf-upload-label-${index}`}>Upload PDF</InputLabel>
                   <input
                     accept="application/pdf"
@@ -126,8 +177,8 @@ const ManageCourseModules = () => {
                       Selected file: {module.pdfFile.name}
                     </Typography>
                   )}
-                </Box>
-                <Box item xs={12}>
+                </Box> */}
+                {/* <Box item xs={12}>
                   <InputLabel id={`other-files-upload-label-${index}`}>Upload Other Files</InputLabel>
                   <input
                     accept="*"
@@ -147,20 +198,35 @@ const ManageCourseModules = () => {
                       Selected files: {module.otherFiles.map((file) => file.name).join(', ')}
                     </Typography>
                   )}
-                </Box>
+                </Box> */}
                 <Box item xs={12}>
-                  <Button variant="outlined" color="secondary" onClick={() => deleteModule(index)}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => deleteModule(index)}
+                  >
                     Delete Module
                   </Button>
                 </Box>
               </Box>
             </Paper>
           ))}
-          <Button variant="contained" color="primary" onClick={addModule} sx={{ mt: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={addModule}
+            sx={{ mt: 2 }}
+          >
             Add Another Module
           </Button>
           <Box item xs={12}>
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
               Save Modules
             </Button>
           </Box>
@@ -171,4 +237,3 @@ const ManageCourseModules = () => {
 };
 
 export default ManageCourseModules;
-

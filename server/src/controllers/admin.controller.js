@@ -51,6 +51,9 @@ const addLectures = asyncHandler(async (req, res) => {
 
     const { title, description } = req?.body;
 
+    console.log(req?.files);
+    
+
     let file;
 
     if (
@@ -60,7 +63,6 @@ const addLectures = asyncHandler(async (req, res) => {
     ) {
         file = req?.files?.video[0]?.path;
     }
-
 
     if (!file) {
         throw new ApiError(400, "file is required");
