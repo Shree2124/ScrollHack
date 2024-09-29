@@ -117,7 +117,7 @@ const CourseCard = ({ course }) => {
   );
 };
 
-const Courses = () => {
+const Courses = ({CoursesList, text="Available Courses"}) => {
   useEffect(() => {
     fetchCourse();
   }, []);
@@ -125,7 +125,7 @@ const Courses = () => {
   return (
     <Container sx={{ py: 8 }}>
       <Typography variant="h4" align="center" gutterBottom>
-        Available Courses
+        {text}
       </Typography>
       <Box
         container

@@ -18,6 +18,7 @@ import {
   PaymentSuccessful,
   PaymentFailurePage,
   Unauthorized,
+  OwnerCourses,
 } from "./Pages/index.js";
 import { createBrowserRouter } from "react-router-dom";
 import "./index.css";
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
+        /* Public Routes */
       {
         path: "/",
         element: <HomePage />,
@@ -53,6 +55,7 @@ const router = createBrowserRouter([
         path: "/auth/otp-verification/:activationToken",
         element: <OtpVerificationPage />,
       },
+      /* User Routes */
       {
         path: "/update-user-profile",
         element: (
@@ -78,6 +81,23 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/payment-successfull/:courseId",
+        element: (
+          <AuthLayout allowedRoles={ROLES.user}>
+            <PaymentSuccessful />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/payment-fail/:courseId",
+        element: (
+          <AuthLayout allowedRoles={ROLES.user}>
+            <PaymentFailurePage />
+          </AuthLayout>
+        ),
+      },
+      /* Admin routes */
+      {
         path: "/admin/upload-course",
         element: (
           <AuthLayout allowedRoles={ROLES.Admin}>
@@ -102,21 +122,21 @@ const router = createBrowserRouter([
         ),
       },
       {
+<<<<<<< HEAD
         path: "/payment-successful/:courseId",
         element: (
           <AuthLayout allowedRoles={ROLES.user}>
             <PaymentSuccessful />
+=======
+        path:'/admin/owned-courses',
+        element:(
+          <AuthLayout allowedRoles={ROLES.Admin}>
+            <OwnerCourses/>
+>>>>>>> 4f3a7b6652265302e6af0d3c1b8c4d6cb7c65c74
           </AuthLayout>
-        ),
+        )
       },
-      {
-        path: "/payment-fail/:courseId",
-        element: (
-          <AuthLayout allowedRoles={ROLES.user}>
-            <PaymentFailurePage />
-          </AuthLayout>
-        ),
-      },
+
     ],
   },
 ]);
