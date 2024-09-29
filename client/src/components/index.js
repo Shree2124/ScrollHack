@@ -4,7 +4,7 @@ import Dashboard from './Dashboard'
 import Container from './container'
 import Header from './Header/Header'
 import Footer from './Footer/Footer'
-
+import AuthLayout from './AuthLayout'
 
 
 export{
@@ -13,5 +13,6 @@ export{
     Dashboard,
     Container,
     Header,
-    Footer
+    Footer,
+    AuthLayout
 }

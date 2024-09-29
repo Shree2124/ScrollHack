@@ -6,8 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axios";
 import {useDispatch} from "react-redux"
 import { setError, setLoading, setUser } from "../redux/slices/authSlice";
+import useAuth from "../hooks/useAuth";
 
 const Login = () => {
+  const {user} = useAuth()
+  console.log(user);
+  
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
@@ -37,7 +41,7 @@ const Login = () => {
           dispatch(setError(false))
         });
 
-        navigate('all-courses')
+        navigate('/all-courses',{replace:true})
     } catch (error) {
       console.log(error);
     }

@@ -10,6 +10,7 @@ import EditCoursePage from './EditCoursePage/EditCoursePage'
 import ProfileUpdate from './ProfileUpdate/ProfileUpdate'
 import PaymentSuccessful from './PaymentSuccess/PaymentSuccess'
 import PaymentFailurePage from './PaymentFailed/PaymentFailed'
+import Unauthorized from './Unauthorized/Unauthorized'
 export{
     HomePage,
     LoginPage,
@@ -22,5 +23,6 @@ export{
     EditCoursePage,
     ProfileUpdate,
     PaymentSuccessful,
-    PaymentFailurePage
+    PaymentFailurePage,
+    Unauthorized
 }

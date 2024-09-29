@@ -29,9 +29,9 @@ const options = {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { fullName, email, username, password } = req.body;
+    const { fullName, email, username, password,role } = req.body;
     if (
-        [fullName, email, username, password].some((field) => field?.trim() === "")
+        [fullName, email, username, password,role].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "All fields are required");
     }
@@ -47,6 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username,
         email,
         password,
+        role
     };
 
     const otp = Math.floor(Math.random() * 1000000);
@@ -171,6 +172,7 @@ const verifyUser = asyncHandler(async (req, res) => {
         email: verify.user.email,
         fullName: verify.user.fullName,
         password: verify.user.password,
+        role:verify.user.role
     });
 
     res.json({

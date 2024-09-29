@@ -59,13 +59,13 @@ const HomePage = () => {
           Whether you're a beginner or an experienced learner, we have something for everyone.
           Join our community of learners today and start your journey towards mastering new skills!
         </Typography>
-        <Link to="/courses" style={{ textDecoration: 'none' }}>
+
           <Button variant="contained" color="primary" size="large">
             <Link to='/login'>
             Get Started
             </Link>
           </Button>
-        </Link>
+        
       </AnimatedBox>
     </Box>
   );
