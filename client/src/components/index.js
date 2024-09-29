@@ -1,5 +1,5 @@
 import Login from './Login'
-import Register from './register'
+import Register from './Register.jsx'
 import Dashboard from './Dashboard'
 import Container from './container'
 import Header from './Header/Header'
