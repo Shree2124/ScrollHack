@@ -64,7 +64,7 @@ const router = createBrowserRouter([
       {
         path: "/all-courses",
         element: (
-          <AuthLayout allowedRoles={ROLES.user}>
+          <AuthLayout allowedRoles={[ROLES.user, ROLES.Admin]}>
             <Courses />
           </AuthLayout>
         ),
@@ -102,7 +102,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/payment-successfull/:courseId",
+        path: "/payment-successful/:courseId",
         element: (
           <AuthLayout allowedRoles={ROLES.user}>
             <PaymentSuccessful />

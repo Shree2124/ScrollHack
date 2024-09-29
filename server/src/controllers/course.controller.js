@@ -8,6 +8,7 @@ import { Progress } from "../models/progress.model.js"
 import Stripe from 'stripe';
 import { Payment } from "../models/payment.model.js"
 import { getCourseRecommendations } from "../utils/getCourseRecommendations.js"
+import mongoose from "mongoose"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -70,44 +71,56 @@ const getMyCourses = asyncHandler(async (req, res) => {
 })
 
 const checkout = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.body._id);
-    const course = await Courses.findById(req.params.id);
+    try {
+
+        const user = await User.findById(new mongoose.Types.ObjectId(req?.body?.id));
+        const course = await Courses.findById(new mongoose.Types.ObjectId(req?.params?.id));
 
 
-    if (user.subscription.includes(course._id)) {
-        return res.status(400).json({
-            message: "You already have this course",
+        if (user?.subscription?.includes(course._id)) {
+            return res.status(400).json({
+                message: "You already have this course",
+            });
+        }
+
+        console.log(process.env.CLIENT_URL);
+        
+
+        const session = await stripe?.checkout?.sessions?.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'inr',
+                        product_data: {
+                            name: course?.title,
+                        },
+                        unit_amount: course?.price * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment',
+            success_url: `${process.env.CLIENT_URL}/payment-successful/${course?._id}?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.CLIENT_URL}/payment-fail/${course?.id}`,
+            customer_email: user?.email,
+            metadata: {
+                courseId: course?._id.toString(),
+                userId: user?._id?.toString(),
+            },
         });
+        
+
+        res.status(201).json({
+            sessionId: session?.id,
+            url: session?.url,
+        });
+
+    } catch (error) {
+        console.log(error);
+
     }
 
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [
-            {
-                price_data: {
-                    currency: 'inr',
-                    product_data: {
-                        name: course.title,
-                    },
-                    unit_amount: course.price * 100,
-                },
-                quantity: 1,
-            },
-        ],
-        mode: 'payment',
-        success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.CLIENT_URL}/cancel`,
-        customer_email: user.email,
-        metadata: {
-            courseId: course._id.toString(),
-            userId: user._id.toString(),
-        },
-    });
-
-    res.status(201).json({
-        sessionId: session.id,
-        url: session.url,
-    });
 })
 
 const paymentVerification = asyncHandler(async (req, res) => {
@@ -197,22 +210,10 @@ const getYourProgress = asyncHandler(async (req, res) => {
 
 const fetchCourseRecommendations = asyncHandler(async (req, res) => {
     const userId = req.user._id;
-    const user = await User.findById(userId).populate('subscription');
 
-    let tags = [];
-    if (user && user.subscription.length) {
-        tags = user.subscription.flatMap(course => course.tags);
-    }
-    if (!tags.length) {
-        tags = ['Programming', 'Web Development', 'Data Science']; 
-    }
+    const recommendations = await getCourseRecommendations(userId)
 
-    const recommendedCourses = await Courses.find({
-        _id: { $nin: user.subscription }, 
-        tags: { $in: tags }
-    }).limit(10);
-
-    return res.status(200).json({ recommendedCourses });
+    return res.status(200).json({ recommendations });
 });
 
 

@@ -16,7 +16,6 @@
 // const Header = () => {
 //   const {user} = useSelector(state => state.auth);
 //   console.log(user);
-  
 
 //   const [items, setItems] = useState([
 //     { id: 1, name: "Home", current: false, to: "/" },
@@ -76,7 +75,7 @@
 //             {!user ? (<div className="hidden sm:ml-6 sm:block">
 //               <div className="flex space-x-4">
 //                 {items.map((item) => (
-                  
+
 //                   <Link
 //                     key={item.name}
 //                     to={item.to}
@@ -93,13 +92,13 @@
 //                   >
 //                     {item.name}
 //                   </Link>
-                 
+
 //                 ))}
 //               </div>
 //             </div>):(<div className="hidden sm:ml-6 sm:block">
 //               <div className="flex space-x-4">
 //                 {userOptions.map((item) => (
-                  
+
 //                   <Link
 //                     key={item.name}
 //                     to={item.to}
@@ -116,16 +115,16 @@
 //                   >
 //                     {item.name}
 //                   </Link>
-                 
+
 //                 ))}
 //               </div>
 //             </div>)}
-            
+
 //           </div>
 //           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 //             {/* Profile dropdown */}
 
-//             {user && 
+//             {user &&
 //               <Menu as="div" className="relative ml-3">
 //                 <div>
 //                   <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -189,6 +188,7 @@
 // };
 
 // export default Header;
+
 import { useState, useEffect } from "react";
 import {
   Disclosure,
@@ -206,9 +206,9 @@ import { useSelector } from "react-redux";
 import axiosInstance from "../../utils/axios";
 
 const Header = () => {
-  const { user } = useSelector(state => state.auth);
+  const { user } = useSelector((state) => state.auth);
   console.log(user);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -219,42 +219,57 @@ const Header = () => {
         { id: 2, name: "Login", current: false, to: "/login" },
         { id: 3, name: "Signup", current: false, to: "/signup" },
       ]);
-    } else {
+    } else if (user?.role === "user") {
       const userItems = [
         { id: 1, name: "Home", current: false, to: "/" },
         { id: 2, name: "All Courses", current: false, to: "/all-courses" },
-        { id: 3, name: "Enrolled Courses", current: false, to: "/enrolled-courses" },
+        {
+          id: 3,
+          name: "Enrolled Courses",
+          current: false,
+          to: "/enrolled-courses",
+        },
       ];
 
-      if (user.role === 'admin') {
-        userItems.push({ id: 4, name: "Create Course", current: false, to: "/create-course" });
-        userItems.push({ id: 5, name: "Your Courses", current: false, to: "/your-courses" });
-      }
+      setItems(userItems);
+    } else if (user.role === "admin") {
+      const userItems = [
+        { id: 1, name: "Home", current: false, to: "/" },
+        { id: 2, name: "All Courses", current: false, to: "/all-courses" },
+        {
+          id: 4,
+          name: "Create Course",
+          current: false,
+          to: "/admin/upload-course",
+        },
+        { id: 5, name: "Your Courses", current: false, to: "/your-courses" },
+      ];
 
       setItems(userItems);
     }
-  }, [user]); // Runs when the user state changes
+  }, [user]);
 
   const handleClick = (id) => {
-    setItems(items.map((item) => (
-      item.id === id
-        ? { ...item, current: true }
-        : { ...item, current: false }
-    )));
+    setItems(
+      items.map((item) =>
+        item.id === id
+          ? { ...item, current: true }
+          : { ...item, current: false }
+      )
+    );
   };
 
-  const handleLogout = async()=>{
+  const handleLogout = async () => {
     try {
-      const {data} = await axiosInstance.post('/user/logout')
+      const { data } = await axiosInstance.post("/user/logout");
 
       console.log("Logout message: ", data.message);
-      
-      navigate('/')
+
+      navigate("/");
     } catch (error) {
       console.log("Error: ", error?.message);
-      
     }
-  }
+  };
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");

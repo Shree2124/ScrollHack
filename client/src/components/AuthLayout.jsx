@@ -22,6 +22,9 @@ import Loader from "./Loader";
 
 
 const AuthLayout = ({ allowedRoles,children }) => {
+  console.log(allowedRoles);
+  
+
   const { user, loading } = useAuth();
   
   // Check if user is undefined or has no roles
@@ -36,8 +39,8 @@ const AuthLayout = ({ allowedRoles,children }) => {
   
   const location = useLocation();
   
-  return user && allowedRoles.includes(user?.role) ? (
-   children
+  return user && allowedRoles?.includes(user?.role) ? (
+    children
   ) : (
     <Navigate to="/unauthorized" state={{ from: location }} replace />
   );

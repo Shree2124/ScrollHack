@@ -1,19 +1,26 @@
-import client from './recombee.js';
-import pkg from 'recombee-api-client';
 import { Courses } from '../models/courses.model.js';
+import { User } from '../models/users.model.js';
 import { asyncHandler } from './asyncHandler.js';
 
-import Recombee from 'recombee-api-client';
-const rqs = Recombee.requests;
 
 export const getCourseRecommendations = asyncHandler(async (userId) => {
     try {
-        const recommendations = await client.send(new Recombee.rqs.RecommendItemsToUser(userId, 5));
-        const recommendedCourseIds = recommendations.recommendations.map(rec => rec.id);
-        
-        console.log('Recommended Course IDs:', recommendedCourseIds); 
+        const user = await User.findById(userId).populate('subscription');
 
-        return recommendedCourseIds.map(id => mongoose.Types.ObjectId(id));
+        let tags = [];
+        if (user && user.subscription.length) {
+            tags = user.subscription.flatMap(course => course.tags);
+        }
+        if (!tags.length) {
+            tags = ['Programming', 'Web Development', 'Data Science']; 
+        }
+    
+        const recommendedCourses = await Courses.find({
+            _id: { $nin: user.subscription }, 
+            tags: { $in: tags }
+        }).limit(10);
+
+        return recommendedCourses
     } catch (error) {
         console.error(error);
         throw new Error('Error fetching recommendations');
