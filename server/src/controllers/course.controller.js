@@ -31,15 +31,19 @@ const getSingleCourse = asyncHandler(async (req, res) => {
 })
 
 const fetchLectures = asyncHandler(async (req, res) => {
+    console.log(req.params.id)
     const lecture = await Lecture.findById(req.params.id);
+    console.log(lecture);
+    
 
     const user = await User.findById(req.user._id);
 
-    if (user.role === "admin") {
+
+    if (user.role === "admin" || user.role === "user") {
         return res.json({ lecture });
     }
 
-    if (!user.subscription.includes(lecture.course))
+    if (!user.subscription?.includes(lecture?.course))
         return res.status(400).json({
             message: "You have not subscribed to this course",
         });

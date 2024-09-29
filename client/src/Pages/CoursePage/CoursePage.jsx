@@ -15,35 +15,36 @@ import {
 import MenuIcon from "@mui/icons-material/Menu"; 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axiosInstance from "../../utils/axios"; // Import your axios instance
+import { useParams } from "react-router-dom";
 
-// Example data for the modules
 const courseModules = [
   {
-    id: 1,
+    _id: 1,
     title: "Introduction to React",
     description: "Learn the basics of React.",
   },
   {
-    id: 2,
+    _id: 2,
     title: "State Management in React",
     description: "Dive into useState and useReducer.",
   },
   {
-    id: 3,
+    _id: 3,
     title: "React Router",
     description: "Learn how to navigate between pages.",
   },
   {
-    id: 4,
+    _id: 4,
     title: "Advanced React Patterns",
     description: "Explore advanced patterns in React.",
   },
 ];
 
 const CoursePage = () => {
+  const {courseId} = useParams()
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [lectures, setLectures] = useState([]); // State for lectures
+  const [lectures, setLectures] = useState([]); 
   const currentModule = courseModules[currentModuleIndex];
   const isMobile = useMediaQuery("(max-width: 600px)");
 
@@ -52,7 +53,7 @@ const CoursePage = () => {
   };
 
   const handleNextModule = () => {
-    if (currentModuleIndex < courseModules.length - 1) {
+    if (currentModuleIndex < courseModules?.length - 1) {
       setCurrentModuleIndex(currentModuleIndex + 1);
     }
   };
@@ -63,10 +64,11 @@ const CoursePage = () => {
     }
   };
 
-  // Fetch lectures for the current module
   const fetchLectures = async () => {
     try {
-      const response = await axiosInstance.get(`/lectures/${currentModule.id}`);
+      const response = await axiosInstance.get(`/lectures/${courseId}`);
+      console.log(response);
+      
       setLectures(response.data.lecture);
     } catch (error) {
       console.error("Error fetching lectures:", error);
@@ -74,8 +76,8 @@ const CoursePage = () => {
   };
 
   useEffect(() => {
-    fetchLectures(); // Fetch lectures when the module changes
-  }, [currentModuleIndex]); // Run when currentModuleIndex changes
+    fetchLectures(); 
+  }, [currentModuleIndex]); 
 
   const sidebarContent = (
     <Box sx={{ width: isMobile ? 250 : 300, padding: 2 }}>
@@ -91,7 +93,7 @@ const CoursePage = () => {
             selected={index === currentModuleIndex}
             onClick={() => {
               setCurrentModuleIndex(index);
-              fetchLectures(); // Fetch lectures for the selected module
+              fetchLectures(); 
             }}
           >
             <ListItemText primary={module.title} />
@@ -103,14 +105,13 @@ const CoursePage = () => {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      {/* Sidebar for desktop */}
       {!isMobile && (
         <Paper
           sx={{
             position: "fixed",
-            top: 64, // Adjust to leave space for the navbar height
+            top: 64, 
             left: 0,
-            bottom: 60, // Adjust to leave space for the footer height
+            bottom: 60, 
             width: 300,
             bgcolor: "#f5f5f5",
             boxShadow: 3,
@@ -122,7 +123,6 @@ const CoursePage = () => {
         </Paper>
       )}
 
-      {/* Drawer for mobile */}
       {isMobile && (
         <>
           <IconButton
@@ -131,7 +131,7 @@ const CoursePage = () => {
               position: "fixed",
               top: 10,
               left: 10,
-              zIndex: 1300, // Ensure it appears above the navbar
+              zIndex: 1300, 
               bgcolor: "white",
               borderRadius: "50%",
               boxShadow: 2,
@@ -146,10 +146,10 @@ const CoursePage = () => {
         </>
       )}
 
-      {/* Main content for video and module details */}
+      
       <Container
         sx={{
-          marginLeft: isMobile ? 0 : "300px", // Adjust for sidebar width
+          marginLeft: isMobile ? 0 : "300px", 
           flex: 1,
           padding: 4,
           overflowY: "auto",
@@ -165,11 +165,10 @@ const CoursePage = () => {
           {currentModule.description}
         </Typography>
 
-        {/* Display lectures */}
         <Box sx={{ marginTop: 2, marginBottom: 4 }}>
           <Typography variant="h5">Lectures</Typography>
           <List>
-            {lectures.length > 0 ? (
+            {lectures?.length > 0 ? (
               lectures.map((lecture) => (
                 <ListItem key={lecture._id}>
                   <ListItemText primary={lecture.title} />
@@ -181,7 +180,6 @@ const CoursePage = () => {
           </List>
         </Box>
 
-        {/* Video for current module */}
         <Box sx={{ marginTop: 2, marginBottom: 4 }}>
           <video
             controls

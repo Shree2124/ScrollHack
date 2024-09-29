@@ -185,6 +185,8 @@ const Courses = ({ text = "Available Courses" }) => {
   const fetchSubscribedCourses = async () => {
     try {
       const { data } = await axiosInstance.get("/my-courses");
+      console.log(data.data);
+      
       setSubscribedCourse(data.data);
     } catch (error) {
       console.log(error);
