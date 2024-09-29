@@ -29,9 +29,9 @@ const options = {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { fullName, email, username, password,role } = req.body;
+    const { fullName, email, username, password, role } = req.body;
     if (
-        [fullName, email, username, password,role].some((field) => field?.trim() === "")
+        [fullName, email, username, password, role].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "All fields are required");
     }
@@ -125,7 +125,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         req.user._id,
         {
             $unset: {
-                refreshToken: 1, // this removes the field from document
+                refreshToken: 1,
             },
         },
         {
@@ -148,7 +148,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 const verifyUser = asyncHandler(async (req, res) => {
     const { otp, activationToken } = req.body;
     console.log(otp, activationToken);
-    
+
 
     const verify = jwt.verify(activationToken, process.env.ACTIVATION_SECRET);
     console.log(verify);
@@ -159,8 +159,8 @@ const verifyUser = asyncHandler(async (req, res) => {
             message: "Otp Expired",
         });
 
-        console.log(verify.otp === Number(otp));
-        
+    console.log(verify.otp === Number(otp));
+
 
     if (!(verify.otp === Number(otp)))
         return res.status(400).json({
@@ -172,7 +172,7 @@ const verifyUser = asyncHandler(async (req, res) => {
         email: verify.user.email,
         fullName: verify.user.fullName,
         password: verify.user.password,
-        role:verify.user.role
+        role: verify.user.role
     });
 
     res.json({
