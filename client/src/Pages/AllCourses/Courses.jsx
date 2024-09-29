@@ -10,18 +10,7 @@ import {
 import LinkComponent from "../../components/LinkComponent";
 import axiosInstance from "../../utils/axios";
 
-const fetchCourse = async () => {
-  try {
-    await axiosInstance.get("/course/all").then((res) => {
-      console.log(res);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-// Example data for courses
-const courseContent = [
+let courseContent = [
   {
     id: 1,
     title: "Introduction to JavaScript",
@@ -53,7 +42,24 @@ const courseContent = [
   },
 ];
 
+const fetchCourse = async () => {
+  try {
+    await axiosInstance.get("/course/all").then((res) => {
+      console.log(res);
+      courseContent = [...courseContent,...res.data.data]
+      console.log(courseContent);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Example data for courses
+
+
 const CourseCard = ({ course }) => {
+  console.log("course",course);
+  
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
