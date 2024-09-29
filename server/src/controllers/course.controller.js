@@ -73,18 +73,17 @@ const getMyCourses = asyncHandler(async (req, res) => {
 const checkout = asyncHandler(async (req, res) => {
     try {
 
-        const user = await User.findById(new mongoose.Types.ObjectId(req?.body?.id));
+        const user = await User.findById(req?.body?.id);
         const course = await Courses.findById(new mongoose.Types.ObjectId(req?.params?.id));
 
+        console.log(user);
+        
 
         if (user?.subscription?.includes(course._id)) {
             return res.status(400).json({
                 message: "You already have this course",
             });
         }
-
-        console.log(process.env.CLIENT_URL);
-        
 
         const session = await stripe?.checkout?.sessions?.create({
             payment_method_types: ['card'],
@@ -106,9 +105,12 @@ const checkout = asyncHandler(async (req, res) => {
             customer_email: user?.email,
             metadata: {
                 courseId: course?._id.toString(),
-                userId: user?._id?.toString(),
+                userId: user?._id.toString(),
             },
         });
+
+        console.log(session?.id);
+        
         
 
         res.status(201).json({
@@ -127,10 +129,14 @@ const paymentVerification = asyncHandler(async (req, res) => {
     console.log(req?.params);
 
     const session = await stripe?.checkout?.sessions?.retrieve(req?.params?.id);
+    console.log(session);
+    
 
     if (session?.payment_status === 'paid') {
-        const courseId = session.metadata.courseId;
-        const userId = session.metadata.userId;
+        const courseId = session?.metadata?.courseId;
+        const userId = req?.user?.id;
+        console.log(userId);
+        
 
         await Payment.create({
             stripe_session_id: session.id,
@@ -142,11 +148,18 @@ const paymentVerification = asyncHandler(async (req, res) => {
             success_url: `${process.env.CLIENT_URL}/cancel`
         });
 
+        
+
         const user = await User.findById(userId);
+        console.log(user);
+        
         const course = await Courses.findById(courseId);
 
-        user.subscription.push(course._id);
-        await user.save();
+        user?.subscription?.push(course?._id);
+        await user?.save();
+
+        console.log("user ",user);
+        
 
         await Progress.create({
             course: course._id,
@@ -155,10 +168,12 @@ const paymentVerification = asyncHandler(async (req, res) => {
         });
 
         const recommendedCourses = await getCourseRecommendations(userId);
+        console.log("rec ",recommendedCourses);
+        
 
         res.status(200).json({
             message: "Course Purchased Successfully",
-            recommendedCourses
+            recommendedCourses: recommendedCourses
         });
     } else {
         return res.status(400).json({

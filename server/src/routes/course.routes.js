@@ -19,8 +19,8 @@ router.get("/course/:id", getSingleCourse);
 router.get("/lectures/:id", verifyJWT, fetchLectures);
 router.get("/lecture/:id", verifyJWT, fetchLecture);
 router.get("/my-courses", verifyJWT, getMyCourses);
-router.post("/course/checkout/:id", checkout);
-router.post("/verification/:id", paymentVerification);
+router.post("/course/checkout/:id", verifyJWT,checkout);
+router.post("/verification/:id", verifyJWT,paymentVerification);
 router.get("/recommendation",verifyJWT,fetchCourseRecommendations);
 
 export default router;

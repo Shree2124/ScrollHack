@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import axiosInstance from "../../utils/axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setStripe } from "../../redux/slices/authSlice";
 
 let courseContent = [
   {
@@ -59,7 +60,7 @@ const fetchCourse = async () => {
 // eslint-disable-next-line react/prop-types
 const CourseCard = ({ course }) => {
   const { user } = useSelector((state) => state.auth);
-
+  const dispatch = useDispatch();
   const makePayment = async () => {
     try {
       // eslint-disable-next-line no-undef
@@ -68,7 +69,6 @@ const CourseCard = ({ course }) => {
       );
 
       console.log(course);
-      
 
       const response = await axiosInstance.post(
         `/course/checkout/${course?._id}`,
@@ -77,7 +77,13 @@ const CourseCard = ({ course }) => {
         }
       );
 
-      console.log(response);
+      dispatch(setStripe(response.data.sessionId));
+
+      console.log("stripe", response?.data?.sessionId);
+
+      // setTimeout(()=>{
+      //   console.log("Stripe", response?.data?.sessionId);
+      // },5000)
 
       const result = stripe?.redirectToCheckout({
         sessionId: response?.data?.sessionId,
@@ -117,7 +123,7 @@ const CourseCard = ({ course }) => {
   );
 };
 
-const Courses = ({CoursesList, text="Available Courses"}) => {
+const Courses = ({ CoursesList, text = "Available Courses" }) => {
   useEffect(() => {
     fetchCourse();
   }, []);

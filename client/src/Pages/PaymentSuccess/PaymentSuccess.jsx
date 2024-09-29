@@ -13,7 +13,6 @@ import { Container } from "../../components";
 import { Link, useLocation, useParams } from "react-router-dom";
 import axiosInstance from "../../utils/axios";
 
-// Temporary data for the course and recommendations
 const courseDetails = {
   title: "Course Title",
   description: "This is a brief description of the course.",
@@ -42,9 +41,8 @@ const PaymentSuccessPage = () => {
   const location = useLocation();
   const { courseId } = useParams(); // Get the courseId from the URL params
   const [sessionId, setSessionId] = useState(null);
-  // const [paymentDetails, setPaymentDetails] = useState(null);
-  // const [error, setError] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Helper function to extract query parameters
   const getQueryParams = (query) => {
@@ -54,43 +52,52 @@ const PaymentSuccessPage = () => {
   const verification = async () => {
     try {
       if (sessionId) {
+        setLoading(true);
         const response = await axiosInstance.post(`/verification/${sessionId}`);
-        console.log(response);
-        
-        // setPaymentDetails(response.data);
+        console.log(response.data);
+        setLoading(false);
       } else {
-        // setError("Session ID not found.");
-        console.log("session id not found");
-        
+        console.log("Session ID not found");
       }
     } catch (error) {
-      console.log(error);
-      // setError("Payment verification failed.");
-    } finally {
-      // setLoading(false);
+      console.error(error);
+      setError(error.response ? error.response.data.message : "Payment verification failed.");
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     const queryParams = getQueryParams(location.search);
     const session_id = queryParams.get("session_id");
+    console.log("Session ID from URL: ", session_id);
 
     if (session_id) {
       setSessionId(session_id);
       verification();
     } else {
-      // setLoading(false);
-      // setError("No session ID found.");
+      setLoading(false);
+      setError("No session ID found.");
     }
-  }, [location.search]);
+  }, [sessionId]);
+
+  if (loading) {
+    return (
+      <Container>
+        <Typography variant="h5">Loading....</Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <MuiContainer>
-        <Alert
-          severity="success"
-          sx={{ backgroundColor: "green", color: "white" }}
-        >
+        {error && (
+          <Alert severity="error" sx={{ backgroundColor: "red", color: "white" }}>
+            {error}
+          </Alert>
+        )}
+
+        <Alert severity="success" sx={{ backgroundColor: "green", color: "white" }}>
           Payment was successful!
         </Alert>
 
@@ -98,13 +105,11 @@ const PaymentSuccessPage = () => {
           Payment Successful
         </Typography>
 
-        <Card
-          sx={{ display: "flex", alignItems: "center", marginBottom: "2rem" }}
-        >
+        <Card sx={{ display: "flex", alignItems: "center", marginBottom: "2rem" }}>
           <CardMedia
             component="img"
             sx={{ width: 150 }}
-            image={courseDetails.image}
+            image={courseDetails.imageUrl}
             alt={courseDetails.title}
           />
           <CardContent>
@@ -114,19 +119,16 @@ const PaymentSuccessPage = () => {
         </Card>
 
         <Button variant="contained" color="primary" fullWidth>
-          <Link to={`/course-page/${courseId}`}>Go to Course Page</Link>
+          <Link to={`/course-page/${courseId}`} style={{ color: "white", textDecoration: "none" }}>
+            Go to Course Page
+          </Link>
         </Button>
 
         <Typography variant="h6" sx={{ margin: "2rem 0" }}>
           Recommended Courses
         </Typography>
 
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap={2}
-          sx={{ marginBottom: "2rem" }}
-        >
+        <Box display="flex" flexDirection="column" gap={2} sx={{ marginBottom: "2rem" }}>
           {recommendations.map((course, index) => (
             <Card key={index} sx={{ display: "flex", alignItems: "center" }}>
               <CardMedia
@@ -135,13 +137,7 @@ const PaymentSuccessPage = () => {
                 image={course.imageUrl}
                 alt={course.title}
               />
-              <CardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexWrap: "wrap",
-                }}
-              >
+              <CardContent sx={{ display: "flex", flexDirection: "column", flexWrap: "wrap" }}>
                 <Typography variant="h6">{course.title}</Typography>
                 <Typography variant="body2">{course.description}</Typography>
               </CardContent>

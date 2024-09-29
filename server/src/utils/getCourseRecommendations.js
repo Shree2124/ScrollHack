@@ -6,19 +6,24 @@ import { asyncHandler } from './asyncHandler.js';
 export const getCourseRecommendations = asyncHandler(async (userId) => {
     try {
         const user = await User.findById(userId).populate('subscription');
+        console.log(user);
+        
 
         let tags = [];
-        if (user && user.subscription.length) {
+        if (user && user.subscription.length>0) {
             tags = user.subscription.flatMap(course => course.tags);
         }
-        if (!tags.length) {
+        if (tags?.length===0) {
             tags = ['Programming', 'Web Development', 'Data Science']; 
         }
     
         const recommendedCourses = await Courses.find({
-            _id: { $nin: user.subscription }, 
+            _id: { $nin: user?.subscription }, 
             tags: { $in: tags }
         }).limit(10);
+
+        console.log(recommendedCourses);
+        
 
         return recommendedCourses
     } catch (error) {

@@ -5,6 +5,7 @@ const initialState = {
     user: null,
     loading: true,
     error: null,
+    stripe: null,
     activationCode:null
 };
 
@@ -15,6 +16,9 @@ const authSlice = createSlice({
         setUser: (state, action) => {
             state.user = action.payload;
             state.loading = false;
+        },
+        setStripe: (state, action)=>{
+            state.stripe = action.payload
         },
         setError: (state, action) => {
             state.error = action.payload;
@@ -31,7 +35,7 @@ const authSlice = createSlice({
     },
 });
 
-export const { setUser, setError, setLoading, clearUser } = authSlice.actions;
+export const { setUser, setError, setLoading, clearUser, setStripe } = authSlice.actions;
 
 const getCookieToken = (tokenName) => {
     const token = document.cookie.split('; ').find(row => row.startsWith(`${tokenName}=`));
