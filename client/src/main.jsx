@@ -25,8 +25,8 @@ import "./index.css";
 import AuthLayout from "./components/AuthLayout.jsx";
 
 const ROLES = {
-  user: 'user',
-  Admin: 'admin',
+  user: "user",
+  Admin: "admin",
 };
 
 const router = createBrowserRouter([
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
-        /* Public Routes */
+      /* Public Routes */
       {
         path: "/",
         element: <HomePage />,
@@ -59,7 +59,7 @@ const router = createBrowserRouter([
       {
         path: "/update-user-profile",
         element: (
-          <AuthLayout allowedRoles={ROLES.user}>
+          <AuthLayout allowedRoles={[ROLES.user]}>
             <ProfileUpdate />
           </AuthLayout>
         ),
@@ -75,15 +75,15 @@ const router = createBrowserRouter([
       {
         path: "/course-page/:courseId",
         element: (
-          <AuthLayout allowedRoles={ROLES.user}>
+          <AuthLayout allowedRoles={[ROLES.user]}>
             <CoursePage />
           </AuthLayout>
         ),
       },
       {
-        path: "/payment-successfull/:courseId",
+        path: "/payment-successful/:courseId",
         element: (
-          <AuthLayout allowedRoles={ROLES.user}>
+          <AuthLayout allowedRoles={[ROLES.user]}>
             <PaymentSuccessful />
           </AuthLayout>
         ),
@@ -91,16 +91,16 @@ const router = createBrowserRouter([
       {
         path: "/payment-fail/:courseId",
         element: (
-          <AuthLayout allowedRoles={ROLES.user}>
+          <AuthLayout allowedRoles={[ROLES.user]}>
             <PaymentFailurePage />
           </AuthLayout>
         ),
       },
-      /* Admin routes */
+      /* Admin Routes */
       {
         path: "/admin/upload-course",
         element: (
-          <AuthLayout allowedRoles={ROLES.Admin}>
+          <AuthLayout allowedRoles={[ROLES.Admin]}>
             <UploadCourse />
           </AuthLayout>
         ),
@@ -108,7 +108,7 @@ const router = createBrowserRouter([
       {
         path: "/admin/add-course-content/:courseId",
         element: (
-          <AuthLayout allowedRoles={ROLES.Admin}>
+          <AuthLayout allowedRoles={[ROLES.Admin]}>
             <AddCourseContent />
           </AuthLayout>
         ),
@@ -116,27 +116,23 @@ const router = createBrowserRouter([
       {
         path: "/admin/edit-course/:courseId",
         element: (
-          <AuthLayout allowedRoles={ROLES.Admin}>
+          <AuthLayout allowedRoles={[ROLES.Admin]}>
             <EditCoursePage />
           </AuthLayout>
         ),
       },
       {
-        path: "/payment-successful/:courseId",
+        path: "/admin/owned-courses",
         element: (
-          <AuthLayout allowedRoles={ROLES.user}>
-            <PaymentSuccessful />
-        path:'/admin/owned-courses',
-        element:(
-          <AuthLayout allowedRoles={ROLES.Admin}>
-            <OwnerCourses/>
+          <AuthLayout allowedRoles={[ROLES.Admin]}>
+            <OwnerCourses />
           </AuthLayout>
-        )
+        ),
       },
-
     ],
   },
 ]);
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
