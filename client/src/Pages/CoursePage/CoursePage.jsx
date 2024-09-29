@@ -12,40 +12,16 @@ import {
   IconButton,
   Drawer,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu"; 
+import MenuIcon from "@mui/icons-material/Menu";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axiosInstance from "../../utils/axios"; // Import your axios instance
 import { useParams } from "react-router-dom";
 
-const courseModules = [
-  {
-    _id: 1,
-    title: "Introduction to React",
-    description: "Learn the basics of React.",
-  },
-  {
-    _id: 2,
-    title: "State Management in React",
-    description: "Dive into useState and useReducer.",
-  },
-  {
-    _id: 3,
-    title: "React Router",
-    description: "Learn how to navigate between pages.",
-  },
-  {
-    _id: 4,
-    title: "Advanced React Patterns",
-    description: "Explore advanced patterns in React.",
-  },
-];
-
 const CoursePage = () => {
-  const {courseId} = useParams()
+  const { courseId } = useParams();
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [lectures, setLectures] = useState([]); 
-  const currentModule = courseModules[currentModuleIndex];
+  const [courseModules, setCourseModules] = useState([]); // Dynamically set modules here
   const isMobile = useMediaQuery("(max-width: 600px)");
 
   const toggleDrawer = () => {
@@ -68,16 +44,19 @@ const CoursePage = () => {
     try {
       const response = await axiosInstance.get(`/lectures/${courseId}`);
       console.log(response);
-      
-      setLectures(response.data.lecture);
+
+      // Assuming API response has a structure similar to what you provided
+      setCourseModules(response.data.lecture);
     } catch (error) {
       console.error("Error fetching lectures:", error);
     }
   };
 
   useEffect(() => {
-    fetchLectures(); 
-  }, [currentModuleIndex]); 
+    fetchLectures(); // Fetch lectures on component mount
+  }, [courseId]);
+
+  const currentModule = courseModules[currentModuleIndex];
 
   const sidebarContent = (
     <Box sx={{ width: isMobile ? 250 : 300, padding: 2 }}>
@@ -89,12 +68,9 @@ const CoursePage = () => {
         {courseModules.map((module, index) => (
           <ListItem
             button
-            key={module.id}
+            key={module._id} // Using _id from the response
             selected={index === currentModuleIndex}
-            onClick={() => {
-              setCurrentModuleIndex(index);
-              fetchLectures(); 
-            }}
+            onClick={() => setCurrentModuleIndex(index)}
           >
             <ListItemText primary={module.title} />
           </ListItem>
@@ -109,9 +85,9 @@ const CoursePage = () => {
         <Paper
           sx={{
             position: "fixed",
-            top: 64, 
+            top: 64,
             left: 0,
-            bottom: 60, 
+            bottom: 60,
             width: 300,
             bgcolor: "#f5f5f5",
             boxShadow: 3,
@@ -131,7 +107,7 @@ const CoursePage = () => {
               position: "fixed",
               top: 10,
               left: 10,
-              zIndex: 1300, 
+              zIndex: 1300,
               bgcolor: "white",
               borderRadius: "50%",
               boxShadow: 2,
@@ -146,10 +122,9 @@ const CoursePage = () => {
         </>
       )}
 
-      
       <Container
         sx={{
-          marginLeft: isMobile ? 0 : "300px", 
+          marginLeft: isMobile ? 0 : "300px",
           flex: 1,
           padding: 4,
           overflowY: "auto",
@@ -158,38 +133,30 @@ const CoursePage = () => {
           zIndex: 1,
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          {currentModule.title}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          {currentModule.description}
-        </Typography>
+        {currentModule && (
+          <>
+            <Typography variant="h4" gutterBottom>
+              {currentModule.title}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {currentModule.description}
+            </Typography>
 
-        <Box sx={{ marginTop: 2, marginBottom: 4 }}>
-          <Typography variant="h5">Lectures</Typography>
-          <List>
-            {lectures?.length > 0 ? (
-              lectures.map((lecture) => (
-                <ListItem key={lecture._id}>
-                  <ListItemText primary={lecture.title} />
-                </ListItem>
-              ))
-            ) : (
-              <Typography>No lectures available for this module.</Typography>
-            )}
-          </List>
-        </Box>
+            <Box sx={{ marginTop: 2, marginBottom: 4 }}>
+              <Typography variant="h5">Lecture Video</Typography>
+            </Box>
 
-        <Box sx={{ marginTop: 2, marginBottom: 4 }}>
-          <video
-            controls
-            width="100%"
-            src={currentModule.videoUrl} 
-            alt={currentModule.title}
-            style={{ maxHeight: "400px" }}
-          >
-          </video>
-        </Box>
+            <Box sx={{ marginTop: 2, marginBottom: 4 }}>
+              <video
+                controls
+                width="100%"
+                src={currentModule.video} // Use video from the API response
+                alt={currentModule.title}
+                style={{ maxHeight: "400px" }}
+              ></video>
+            </Box>
+          </>
+        )}
 
         {/* Module navigation buttons */}
         <Box

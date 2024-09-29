@@ -32,7 +32,7 @@ const getSingleCourse = asyncHandler(async (req, res) => {
 
 const fetchLectures = asyncHandler(async (req, res) => {
     console.log(req.params.id)
-    const lecture = await Lecture.findById(req.params.id);
+    const lecture = await Lecture.find({ course: req.params.id});
     console.log(lecture);
     
 
