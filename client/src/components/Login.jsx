@@ -5,12 +5,12 @@ import Container from "./container";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axios";
 import {useDispatch} from "react-redux"
-import { setError, setLoading, setUser } from "../redux/slices/authSlice";
+import { loginUser, setError, setLoading, setUser } from "../redux/slices/authSlice";
 import useAuth from "../hooks/useAuth";
 
 const Login = () => {
-  const {user} = useAuth()
-  console.log(user);
+  // const {user} = useAuth()
+  // console.log(user);
   
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -30,16 +30,18 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axiosInstance
-        .post("/user/login", {
-          username: formData.username,
-          password: formData.password
-        })
-        .then((res) => {
-          dispatch(setUser(res.data.user))
-          dispatch(setLoading(false))
-          dispatch(setError(false))
-        });
+      // await axiosInstance
+      //   .post("/user/login", {
+      //     username: formData.username,
+      //     password: formData.password
+      //   })
+      //   .then((res) => {
+      //     dispatch(setUser(res.data.user))
+      //     dispatch(setLoading(false))
+      //     dispatch(setError(false))
+      //   });
+
+      dispatch(loginUser(formData))
 
         navigate('/all-courses',{replace:true})
     } catch (error) {

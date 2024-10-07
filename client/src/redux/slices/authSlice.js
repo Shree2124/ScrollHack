@@ -6,19 +6,19 @@ const initialState = {
     loading: true,
     error: null,
     courses: null,
-    activationCode:null
+    activationCode: null
 };
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
+        setCourses: (state, action) => {
+            state.courses = action.payload
+        },
         setUser: (state, action) => {
             state.user = action.payload;
             state.loading = false;
-        },
-        setCourses: (state, action)=>{
-            state.courses = action.payload
         },
         setError: (state, action) => {
             state.error = action.payload;
@@ -31,49 +31,32 @@ const authSlice = createSlice({
             state.user = null;
             state.loading = false;
         },
-
     },
 });
 
 export const { setUser, setError, setLoading, clearUser, setCourses } = authSlice.actions;
 
-const getCookieToken = (tokenName) => {
-    const token = document.cookie.split('; ').find(row => row.startsWith(`${tokenName}=`));
-    return token ? token.split('=')[1] : null;
+export const loginUser = (credentials) => async (dispatch) => {
+    dispatch(setLoading());
+    try {
+        const response = await axiosInstance.post('/user/login', credentials);
+        console.log(response);
+
+        dispatch(fetchUser());
+    } catch (error) {
+        dispatch(setError(error.response.data.message));
+    }
 };
 
 export const fetchUser = () => async (dispatch) => {
     dispatch(setLoading());
     try {
-        const response = await axiosInstance.get('/user/current-user', {
-            headers: {
-                Authorization: `Bearer ${getCookieToken('accessToken')}`,
-            },
-        });
-
-        console.log('User fetched successfully:', response.data);
-
+        const response = await axiosInstance.get('/user/current-user');
         dispatch(setUser(response.data.data));
     } catch (error) {
-        console.error('Error fetching user:', error);
+        console.log(error);
 
-        if (error.response?.status === 401) {
-            try {
-                const refreshToken = getCookieToken('refreshToken');
-                const refreshResponse = await axiosInstance.post('/user/refresh-token', {
-                    refreshToken,
-                });
-                document.cookie = `accessToken=${refreshResponse.data.accessToken}; path=/; secure; SameSite=Lax`;
-                console.log(refreshToken);
-
-                dispatch(fetchUser());
-            } catch (refreshError) {
-                console.error('Error refreshing token:', refreshError);
-                dispatch(clearUser());
-            }
-        } else {
-            dispatch(setError(error.message));
-        }
+        dispatch(setError('Unauthorized'));
     }
 };
 
