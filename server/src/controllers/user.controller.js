@@ -25,7 +25,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'lax',
 };
 
